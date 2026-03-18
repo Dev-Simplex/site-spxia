@@ -809,5 +809,82 @@ code {
 
 .product-cta { width: 100%; text-align: center; margin-top: auto; }
 
+/* ============================================
+   MOBILE OPTIMIZATION — Site Público
+   ============================================ */
+
+/* Touch-friendly tap targets */
+@media (max-width: 767px) {
+  .btn { min-height: 44px; padding: 12px 20px; }
+  .btn-sm { min-height: 40px; padding: 10px 16px; }
+  .btn-lg { padding: 14px 24px; font-size: 0.9375rem; }
+  .nav-toggle { min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
+
+  /* Hero mobile */
+  .hero { padding: 100px 0 60px; min-height: auto; }
+  .hero h1 { font-size: 2rem; }
+  .hero-sub { font-size: 1rem; margin-bottom: 28px; }
+  .hero-actions { margin-bottom: 40px; }
+  .hero-actions .btn { width: 100%; }
+  .hero-stats { gap: 20px; grid-template-columns: 1fr 1fr; }
+  .stat-value { font-size: 2rem; }
+
+  /* Sections mobile */
+  .section { padding: 60px 0; }
+  .section-number { font-size: 2rem; }
+  .section-desc { margin-bottom: 28px; }
+
+  /* Values 1-col on small phones */
+  .values-grid { grid-template-columns: 1fr; }
+  .value-card { padding: 20px; }
+
+  /* Callout */
+  .callout-block { flex-direction: column; padding: 24px; gap: 16px; }
+
+  /* Compare cards */
+  .compare-card { padding: 20px; }
+
+  /* Pillar cards */
+  .pillar-card { padding: 24px 20px; }
+  .pillar-card:hover { transform: none; } /* no hover shift on mobile */
+
+  /* Service cards */
+  .service-card { padding: 24px; }
+
+  /* Result cards */
+  .result-card { padding: 28px 20px; }
+  .result-value { font-size: 2.5rem; }
+  .results-grid-4 { grid-template-columns: 1fr 1fr; }
+
+  /* Cases */
+  .case-card { padding: 20px; }
+  .case-header-row { flex-direction: column; align-items: flex-start; }
+
+  /* Mentoria */
+  .mentoria-card { padding: 24px; }
+
+  /* Products */
+  .product-body { padding: 20px; }
+  .product-price { font-size: 1.5rem; }
+  .product-card:hover { transform: none; }
+
+  /* CTA */
+  .cta-actions .btn { width: 100%; font-size: 0.875rem; }
+  .cta-channels { flex-direction: column; align-items: center; }
+
+  /* Footer */
+  .footer { padding: 32px 0; }
+  .footer-links { gap: 16px; }
+  .footer-links a { font-size: 0.75rem; }
+}
+
+/* Very small screens (< 375px) */
+@media (max-width: 374px) {
+  .container { padding: 0 16px; }
+  .hero h1 { font-size: 1.75rem; }
+  .hero-stats { grid-template-columns: 1fr; }
+  .badge { font-size: 0.55rem; }
+}
+
 /* ---- SELECTION ---- */
 ::selection { background: var(--red); color: #fff; }

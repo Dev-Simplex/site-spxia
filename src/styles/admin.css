@@ -1230,3 +1230,130 @@
 .player-material-link:hover { border-color: var(--red); color: var(--near-white); }
 
 .player-empty { padding: 80px 40px; text-align: center; color: var(--muted); }
+
+/* ============================================
+   MOBILE OPTIMIZATION — Admin / Membros
+   ============================================ */
+@media (max-width: 767px) {
+  /* Login */
+  .login-card { padding: 32px 24px; }
+
+  /* Forms */
+  .form-group input, .form-group select, .form-group textarea {
+    font-size: 16px; /* prevent iOS zoom */
+    padding: 12px 14px;
+    min-height: 44px;
+  }
+
+  /* Admin layout */
+  .admin-content { padding: 20px 16px; }
+  .admin-topbar { padding: 12px 16px; }
+  .admin-page h1 { font-size: 1.4rem; }
+  .admin-page-desc { margin-bottom: 20px; font-size: 0.8125rem; }
+  .admin-page-header { flex-direction: column; gap: 12px; }
+  .admin-page-header .btn { width: 100%; }
+  .admin-form { padding: 16px; }
+
+  /* Back button touch target */
+  .back-btn { min-height: 44px; display: inline-flex; align-items: center; }
+
+  /* Filter bar scrollable */
+  .filter-bar { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  .filter-btn { flex-shrink: 0; min-height: 40px; }
+
+  /* Dashboard */
+  .dash-stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .dash-stat-card { padding: 16px; }
+  .dash-stat-value { font-size: 1.5rem; }
+  .dash-quick-grid { grid-template-columns: 1fr; }
+  .dash-quick-item { min-height: 48px; }
+  .dash-products-grid { grid-template-columns: 1fr; }
+
+  /* Posts */
+  .post-card { padding: 16px; }
+  .post-meta { gap: 8px; }
+
+  /* Sessions */
+  .session-card { padding: 16px; }
+  .session-meta { gap: 8px; font-size: 0.75rem; }
+
+  /* Tickets */
+  .ticket-card { padding: 16px; }
+  .ticket-detail-header { flex-direction: column; align-items: flex-start; }
+  .message-item { max-width: 95%; padding: 10px 14px; }
+  .message-form { flex-direction: column; }
+  .message-form input { min-height: 44px; }
+  .message-form .btn { width: 100%; min-height: 44px; }
+
+  /* Financeiro */
+  .fin-summary { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fin-card { padding: 16px; }
+  .fin-value { font-size: 1.25rem; }
+  .fin-table { font-size: 0.75rem; }
+  .fin-table th { padding: 8px 10px; font-size: 0.55rem; }
+  .fin-table td { padding: 8px 10px; }
+  .sub-card { padding: 16px; }
+  .sub-header { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .sub-details { flex-direction: column; gap: 4px; }
+
+  /* Products admin */
+  .product-admin-card { padding: 16px; flex-direction: column; align-items: flex-start; }
+  .product-admin-actions { width: 100%; }
+  .product-admin-actions .btn, .product-admin-actions .btn-danger { flex: 1; min-height: 40px; text-align: center; justify-content: center; display: inline-flex; }
+
+  /* Users */
+  .user-search input { max-width: 100%; }
+  .user-card { flex-wrap: wrap; padding: 14px 16px; gap: 10px; }
+  .user-role-col { order: -1; }
+  .user-date-col { width: 100%; }
+
+  /* Permissions */
+  .perm-group-card { padding: 16px; flex-direction: column; }
+  .perm-group-actions { width: 100%; }
+  .perm-group-actions .btn, .perm-group-actions .btn-danger { flex: 1; min-height: 40px; text-align: center; justify-content: center; display: inline-flex; }
+  .perm-actions { flex-wrap: wrap; }
+
+  /* Pending banner */
+  .pending-banner { margin: 20px auto; }
+  .pending-steps { gap: 16px; }
+  .pending-step { font-size: 0.7rem; }
+
+  /* Checkout */
+  .checkout-summary { padding: 28px 20px; }
+  .checkout-form-area { padding: 28px 20px; }
+  .checkout-price { font-size: 2rem; }
+  .billing-options { flex-direction: column; }
+  .billing-option { flex-direction: row; min-width: auto; padding: 12px 16px; gap: 10px; }
+  .billing-icon { font-size: 1.25rem; }
+
+  /* Courses catalog */
+  .course-catalog-body { padding: 16px; }
+  .course-catalog-actions { flex-direction: column; }
+  .course-catalog-actions .btn { width: 100%; min-height: 44px; }
+
+  /* Curriculum editor */
+  .curriculum-module-header { padding: 12px 16px; flex-direction: column; align-items: flex-start; }
+  .curriculum-module-actions { width: 100%; }
+  .curriculum-module-actions .btn, .curriculum-module-actions .btn-danger { flex: 1; min-height: 38px; }
+  .curriculum-lesson-header { padding: 12px 16px; }
+  .curriculum-lesson-body { padding: 12px 16px; }
+  .curriculum-lesson-info { gap: 6px; }
+  .curriculum-lesson-title { font-size: 0.8125rem; }
+  .upload-row { flex-direction: column; }
+  .curriculum-lesson-actions { flex-direction: column; }
+  .curriculum-lesson-actions .btn, .curriculum-lesson-actions .btn-danger { width: 100%; min-height: 40px; }
+
+  /* Player */
+  .player-layout { flex-direction: column; }
+  .player-sidebar {
+    width: 100%; position: relative; height: auto; max-height: 40vh;
+    border-right: none; border-bottom: 1px solid var(--border-dark);
+    order: 2;
+  }
+  .player-main { order: 1; }
+  .player-content { padding: 20px 16px; }
+  .player-content h2 { font-size: 1.25rem; }
+  .player-material-link { padding: 10px 14px; display: flex; width: 100%; margin: 4px 0; }
+  .player-video-container { max-height: none; }
+  .player-empty { padding: 40px 16px; }
+}
