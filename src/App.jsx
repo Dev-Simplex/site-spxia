@@ -15,6 +15,8 @@ import Produtos from './pages/admin/Produtos'
 import Usuarios from './pages/admin/Usuarios'
 import Permissoes from './pages/admin/Permissoes'
 import Checkout from './pages/Checkout'
+import Diagnostico from './pages/Diagnostico'
+import Diagnosticos from './pages/admin/Diagnosticos'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -38,6 +40,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Site />} />
           <Route path="/checkout/:slug" element={<Checkout />} />
+          <Route path="/diagnostico" element={<Diagnostico />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={
             <ProtectedRoute>
@@ -53,6 +56,7 @@ export default function App() {
             <Route path="produtos" element={<PermGuard perm="produtos"><Produtos /></PermGuard>} />
             <Route path="usuarios" element={<PermGuard perm="usuarios"><Usuarios /></PermGuard>} />
             <Route path="permissoes" element={<PermGuard perm="permissoes"><Permissoes /></PermGuard>} />
+            <Route path="diagnosticos" element={<PermGuard perm="diagnosticos"><Diagnosticos /></PermGuard>} />
           </Route>
         </Routes>
       </BrowserRouter>

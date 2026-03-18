@@ -16,7 +16,7 @@ export default function Hero() {
         <p className="hero-sub">{t.hero.sub}</p>
         <div className="hero-actions">
           <a href="#servicos" className="btn btn-primary">{t.hero.cta1}</a>
-          <a href="#contato" className="btn btn-secondary">{t.hero.cta2}</a>
+          <a href="/diagnostico" className="btn btn-secondary">{t.hero.cta2}</a>
         </div>
         <div ref={fade.ref} className={`hero-stats fade-in${fade.visible ? ' visible' : ''}`}>
           {t.hero.stats.map(s => (

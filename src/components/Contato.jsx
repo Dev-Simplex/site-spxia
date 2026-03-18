@@ -11,7 +11,7 @@ export default function Contato() {
         <h2>{t.contato.title} <em>{t.contato.titleEm}</em></h2>
         <p>{t.contato.desc}</p>
         <div className="cta-actions">
-          <a href={`mailto:${t.contato.email}`} className="btn btn-primary btn-lg">
+          <a href="/diagnostico" className="btn btn-primary btn-lg">
             {t.contato.cta}
           </a>
         </div>

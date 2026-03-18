@@ -16,7 +16,7 @@ export default function usePermissions() {
       if (profile.role === 'admin') {
         setPermissions({
           dashboard: true, comunidade: true, mentorias: true, formacoes: true,
-          suporte: true, financeiro: true, produtos: true, usuarios: true, permissoes: true,
+          suporte: true, financeiro: true, produtos: true, usuarios: true, permissoes: true, diagnosticos: true,
         })
       } else if (profile.group_id) {
         const { data } = await supabase.from('permission_groups').select('permissions').eq('id', profile.group_id).single()
