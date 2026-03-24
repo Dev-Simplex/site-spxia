@@ -1681,3 +1681,335 @@
   .player-video-container { max-height: none; }
   .player-empty { padding: 40px 16px; }
 }
+
+/* ============================================
+   CALCULADORA DE PROJETOS
+   ============================================ */
+
+.calc-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 1024px) {
+  .calc-layout {
+    grid-template-columns: 1fr 380px;
+  }
+}
+
+.calc-left { min-width: 0; }
+
+.calc-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---- Resultado / Painel direito ---- */
+.calc-result-section {
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.calc-result-title {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.calc-result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 0.875rem;
+  border-bottom: 1px solid rgba(61, 61, 61, 0.5);
+}
+
+.calc-result-row:last-child { border-bottom: none; }
+.calc-result-row span:first-child { color: var(--muted); }
+.calc-result-row span:last-child, .calc-result-row strong { color: var(--near-white); }
+
+.calc-result-sub {
+  display: flex;
+  gap: 16px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  padding: 4px 0 0;
+  flex-wrap: wrap;
+}
+
+.calc-row-big span:last-child { font-weight: 600; font-size: 0.9375rem; }
+.calc-row-price span:last-child { color: var(--red) !important; font-weight: 700; font-size: 1.125rem; }
+.calc-row-profit span:last-child { color: #4ade80 !important; font-weight: 600; }
+
+.calc-totals { border-color: var(--red); }
+
+/* ---- Size badge ---- */
+.calc-size-badge {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid;
+}
+
+.calc-size-badge[data-size="small"] { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); background: rgba(74, 222, 128, 0.1); }
+.calc-size-badge[data-size="medium"] { color: #60a5fa; border-color: rgba(96, 165, 250, 0.3); background: rgba(96, 165, 250, 0.1); }
+.calc-size-badge[data-size="large"] { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.1); }
+.calc-size-badge[data-size="enterprise"] { color: #ED3237; border-color: rgba(237, 50, 55, 0.3); background: rgba(237, 50, 55, 0.1); }
+
+/* ---- Gauge de margem ---- */
+.calc-gauge {
+  height: 8px;
+  background: var(--border-dark);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.calc-gauge-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease, background 0.4s ease;
+}
+
+.calc-gauge-value {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.calc-gauge-legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.625rem;
+  font-family: var(--font-mono);
+  margin-top: 4px;
+}
+
+/* ---- Insights ---- */
+.calc-insight {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  border: 1px solid;
+}
+
+.calc-insight:last-child { margin-bottom: 0; }
+
+.calc-insight-msg {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.calc-insight-action {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
+.calc-insight-critical { background: rgba(237, 50, 55, 0.1); border-color: rgba(237, 50, 55, 0.3); color: #ED3237; }
+.calc-insight-warning { background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.3); color: #fbbf24; }
+.calc-insight-success { background: rgba(74, 222, 128, 0.1); border-color: rgba(74, 222, 128, 0.3); color: #4ade80; }
+.calc-insight-opportunity { background: rgba(96, 165, 250, 0.1); border-color: rgba(96, 165, 250, 0.3); color: #60a5fa; }
+
+/* ---- Módulos ---- */
+.calc-section-title {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.calc-module-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 8px;
+  transition: border-color 0.2s;
+}
+
+.calc-module-card.active { border-color: rgba(237, 50, 55, 0.4); }
+.calc-module-card:hover { border-color: var(--red); }
+
+.calc-module-check { padding-top: 2px; }
+.calc-module-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--red);
+  cursor: pointer;
+}
+
+.calc-module-info { flex: 1; min-width: 0; }
+
+.calc-module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.calc-module-name { font-weight: 600; font-size: 0.875rem; }
+
+.calc-module-badges { display: flex; gap: 6px; }
+
+.calc-badge {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid;
+}
+
+.calc-badge-core { color: #60a5fa; border-color: rgba(96, 165, 250, 0.3); background: rgba(96, 165, 250, 0.1); }
+.calc-badge-extra { color: #c084fc; border-color: rgba(192, 132, 252, 0.3); background: rgba(192, 132, 252, 0.1); }
+.calc-badge-complexity-low { color: #4ade80; border-color: rgba(74, 222, 128, 0.3); background: rgba(74, 222, 128, 0.08); }
+.calc-badge-complexity-medium { color: #fbbf24; border-color: rgba(251, 191, 36, 0.3); background: rgba(251, 191, 36, 0.08); }
+.calc-badge-complexity-high { color: #ED3237; border-color: rgba(237, 50, 55, 0.3); background: rgba(237, 50, 55, 0.08); }
+
+.calc-module-desc {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.calc-module-hours {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.calc-module-hours label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.calc-module-hours input {
+  width: 70px;
+  padding: 4px 8px;
+  font-size: 0.8125rem;
+  background: var(--black);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-sm);
+  color: var(--near-white);
+}
+
+.calc-module-hours input:focus { border-color: var(--red); outline: none; }
+
+.calc-module-cost {
+  font-size: 0.75rem;
+  color: #4ade80;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.calc-module-remove {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.calc-module-remove:hover { color: var(--red); }
+
+/* ---- Range hint ---- */
+.calc-range-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ---- Range slider styling ---- */
+.admin-form input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--border-dark);
+  border-radius: 3px;
+  outline: none;
+  margin-top: 8px;
+}
+
+.admin-form input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--red);
+  cursor: pointer;
+}
+
+.admin-form input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--red);
+  cursor: pointer;
+  border: none;
+}
+
+/* ---- Integration summary ---- */
+.calc-int-summary {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(96, 165, 250, 0.1);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  color: #60a5fa;
+}
+
+/* ---- Templates ---- */
+.calc-template-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 8px;
+  transition: border-color 0.2s;
+}
+
+.calc-template-card:hover { border-color: var(--red); }
+
+.calc-template-info { display: flex; flex-direction: column; gap: 2px; }
+.calc-template-name { font-weight: 600; font-size: 0.875rem; }
+.calc-template-date { font-size: 0.75rem; color: var(--muted); }
+
+/* ---- Gauge section ---- */
+.calc-gauge-section { text-align: center; }
+
+/* ---- Mobile ---- */
+@media (max-width: 1023px) {
+  .calc-right { order: -1; }
+}

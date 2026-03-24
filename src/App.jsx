@@ -17,6 +17,7 @@ import Permissoes from './pages/admin/Permissoes'
 import Checkout from './pages/Checkout'
 import Diagnostico from './pages/Diagnostico'
 import Diagnosticos from './pages/admin/Diagnosticos'
+import Calculadora from './pages/admin/Calculadora'
 import RedefinirSenha from './pages/RedefinirSenha'
 
 function ProtectedRoute({ children }) {
@@ -59,6 +60,7 @@ export default function App() {
             <Route path="usuarios" element={<PermGuard perm="usuarios"><Usuarios /></PermGuard>} />
             <Route path="permissoes" element={<PermGuard perm="permissoes"><Permissoes /></PermGuard>} />
             <Route path="diagnosticos" element={<PermGuard perm="diagnosticos"><Diagnosticos /></PermGuard>} />
+            <Route path="calculadora" element={<PermGuard perm="calculadora"><Calculadora /></PermGuard>} />
           </Route>
         </Routes>
       </BrowserRouter>
