@@ -17,6 +17,7 @@ import Permissoes from './pages/admin/Permissoes'
 import Checkout from './pages/Checkout'
 import Diagnostico from './pages/Diagnostico'
 import Diagnosticos from './pages/admin/Diagnosticos'
+import RedefinirSenha from './pages/RedefinirSenha'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="/checkout/:slug" element={<Checkout />} />
           <Route path="/diagnostico" element={<Diagnostico />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/redefinir-senha" element={<RedefinirSenha />} />
           <Route path="/admin" element={
             <ProtectedRoute>
               <AdminLayout />

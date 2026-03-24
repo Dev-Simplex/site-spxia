@@ -18,16 +18,23 @@ export default function Usuarios() {
   const [formPhone, setFormPhone] = useState('')
   const [formCompany, setFormCompany] = useState('')
   const [saving, setSaving] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [passwordMsg, setPasswordMsg] = useState({ type: '', text: '' })
+  const [savingPassword, setSavingPassword] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
+  const [emailMap, setEmailMap] = useState({})
 
   useEffect(() => { load() }, [])
 
   async function load() {
-    const [{ data: u }, { data: g }] = await Promise.all([
+    const [{ data: u }, { data: g }, { data: emails }] = await Promise.all([
       supabase.from('profiles').select('*, permission_groups(name)').order('created_at', { ascending: false }),
       supabase.from('permission_groups').select('*').order('name'),
+      supabase.rpc('get_all_user_emails'),
     ])
     setUsers(u || [])
     setGroups(g || [])
+    if (emails) setEmailMap(emails)
     setLoading(false)
   }
 
@@ -38,6 +45,32 @@ export default function Usuarios() {
     setFormName(user.full_name || '')
     setFormPhone(user.phone || '')
     setFormCompany(user.company || '')
+    setNewPassword('')
+    setPasswordMsg({ type: '', text: '' })
+    setUserEmail(emailMap[user.id] || '')
+  }
+
+  async function handleChangePassword(e) {
+    e.preventDefault()
+    if (newPassword.length < 6) {
+      setPasswordMsg({ type: 'error', text: 'A senha deve ter no mínimo 6 caracteres.' })
+      return
+    }
+    setSavingPassword(true)
+    setPasswordMsg({ type: '', text: '' })
+    const { data, error } = await supabase.rpc('change_user_password', {
+      target_user_id: editing.id,
+      new_password: newPassword,
+    })
+    if (error) {
+      setPasswordMsg({ type: 'error', text: error.message })
+    } else if (data?.error) {
+      setPasswordMsg({ type: 'error', text: data.error })
+    } else {
+      setPasswordMsg({ type: 'success', text: 'Senha alterada com sucesso!' })
+      setNewPassword('')
+    }
+    setSavingPassword(false)
   }
 
   async function handleSave(e) {
@@ -62,6 +95,7 @@ export default function Usuarios() {
     return (u.full_name || '').toLowerCase().includes(s)
       || (u.company || '').toLowerCase().includes(s)
       || (u.role || '').toLowerCase().includes(s)
+      || (emailMap[u.id] || '').toLowerCase().includes(s)
   })
 
   if (editing) {
@@ -72,6 +106,11 @@ export default function Usuarios() {
         <p className="admin-page-desc">ID: {editing.id}</p>
 
         <form className="admin-form" onSubmit={handleSave}>
+          <div className="form-group">
+            <label>E-mail</label>
+            <input value={userEmail || 'Carregando...'} disabled style={{ opacity: 0.7 }} />
+          </div>
+
           <div className="form-row">
             <div className="form-group">
               <label>Nome completo</label>
@@ -121,6 +160,32 @@ export default function Usuarios() {
             <div><span className="user-detail-label">Bio</span><span>{editing.bio || '—'}</span></div>
           </div>
         </div>
+
+        <div className="user-detail-section">
+          <h3>Alterar Senha</h3>
+          <p className="admin-page-desc" style={{ marginBottom: 12 }}>Defina uma nova senha para este usuário. Não envia e-mail.</p>
+          {passwordMsg.text && (
+            <div className={passwordMsg.type === 'error' ? 'login-error' : 'login-success'}>
+              {passwordMsg.text}
+            </div>
+          )}
+          <form className="admin-form" onSubmit={handleChangePassword} style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
+            <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
+              <label>Nova senha</label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                placeholder="Mínimo 6 caracteres"
+                minLength={6}
+                required
+              />
+            </div>
+            <button type="submit" className="btn btn-primary" disabled={savingPassword} style={{ whiteSpace: 'nowrap' }}>
+              {savingPassword ? 'Salvando...' : 'Alterar Senha'}
+            </button>
+          </form>
+        </div>
       </div>
     )
   }
@@ -154,6 +219,7 @@ export default function Usuarios() {
               </div>
               <div className="user-info-col">
                 <span className="user-name">{u.full_name || 'Sem nome'}</span>
+                <span className="user-email">{emailMap[u.id] || ''}</span>
                 <span className="user-meta">
                   {u.company && <span>{u.company} · </span>}
                   {u.permission_groups?.name || 'Sem grupo'}

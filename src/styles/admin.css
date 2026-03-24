@@ -45,6 +45,25 @@
   margin-bottom: 16px;
 }
 
+.login-forgot {
+  text-align: right;
+  margin-top: -8px;
+  margin-bottom: 8px;
+}
+
+.login-forgot button {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.8125rem;
+  padding: 0;
+}
+
+.login-forgot button:hover {
+  color: var(--red);
+}
+
 .login-btn { width: 100%; margin-top: 8px; }
 
 .login-toggle {
@@ -956,6 +975,7 @@
 
 .user-info-col { flex: 1; min-width: 0; }
 .user-name { display: block; font-weight: 600; font-size: 0.9375rem; color: var(--near-white); }
+.user-email { display: block; font-size: 0.75rem; color: var(--muted); margin-top: 1px; }
 .user-meta { display: block; font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
 
 .user-role-badge {
