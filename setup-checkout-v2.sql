@@ -1,3 +1,4 @@
+-- Requires: migrations/2026-05-19-security-hardening.sql (creates app.get_secret() + vault.ASAAS_API_KEY)
 CREATE OR REPLACE FUNCTION public.checkout(
   p_product_id UUID,
   p_customer_name TEXT,
@@ -6,11 +7,13 @@ CREATE OR REPLACE FUNCTION public.checkout(
   p_customer_phone TEXT DEFAULT '',
   p_billing_type TEXT DEFAULT 'PIX'
 ) RETURNS JSONB
-LANGUAGE plpgsql SECURITY DEFINER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, extensions, app
 AS $$
 DECLARE
   v_product RECORD;
-  v_api_key TEXT := '$aact_prod_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjI3ZTQwNWJlLWFiNzctNDA4Ni04ZThmLWQ2MjFiZWI4M2VmMjo6JGFhY2hfYzc4ODBiODItYzdiZS00MDk5LWI3NjItOTNkYmE5OGNlYzZj';
+  v_api_key TEXT;
   v_base TEXT := 'https://api.asaas.com';
   v_headers extensions.http_header[];
   v_search_res extensions.http_response;
@@ -28,6 +31,10 @@ DECLARE
   v_order_id UUID;
   v_user_exists BOOLEAN;
 BEGIN
+  v_api_key := app.get_secret('ASAAS_API_KEY');
+  IF v_api_key IS NULL OR v_api_key = '' THEN
+    RAISE EXCEPTION 'ASAAS_API_KEY not configured in vault';
+  END IF;
   v_headers := ARRAY[extensions.http_header('access_token', v_api_key)];
 
   -- 1) Get product

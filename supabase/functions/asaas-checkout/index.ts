@@ -1,17 +1,33 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const ASAAS_API_KEY = Deno.env.get('ASAAS_API_KEY')!
+const ASAAS_API_KEY = Deno.env.get('ASAAS_API_KEY')
 const ASAAS_BASE = 'https://api.asaas.com'
-const SB_URL = Deno.env.get('SUPABASE_URL')!
-const SB_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+const SB_URL = Deno.env.get('SUPABASE_URL')
+const SB_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
-const cors = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'content-type, authorization, x-client-info, apikey',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+if (!ASAAS_API_KEY || !SB_URL || !SB_KEY) {
+  throw new Error('Missing required env: ASAAS_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY')
 }
 
-function json(data: unknown, status = 200) {
+const ALLOWED_ORIGINS = new Set([
+  'https://spx.ia.br',
+  'https://www.spx.ia.br',
+  'http://localhost:5173',
+  'http://localhost:3000',
+])
+
+function corsHeaders(req: Request) {
+  const origin = req.headers.get('Origin') || ''
+  return {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.has(origin) ? origin : 'https://spx.ia.br',
+    'Access-Control-Allow-Headers': 'content-type, authorization, x-client-info, apikey',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Vary': 'Origin',
+  }
+}
+
+function json(data: unknown, status = 200, req?: Request) {
+  const cors = req ? corsHeaders(req) : {}
   return new Response(JSON.stringify(data), {
     status,
     headers: { ...cors, 'Content-Type': 'application/json' },
@@ -35,14 +51,14 @@ async function asaasGet(path: string) {
 }
 
 Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: cors })
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders(req) })
 
   try {
     const { productId, customerName, customerEmail, customerCpfCnpj, customerPhone, billingType } =
       await req.json()
 
     if (!productId || !customerName || !customerEmail || !customerCpfCnpj || !billingType) {
-      return json({ message: 'Campos obrigatórios faltando' }, 400)
+      return json({ message: 'Campos obrigatórios faltando' }, 400, req)
     }
 
     const sb = createClient(SB_URL, SB_KEY)
@@ -56,7 +72,7 @@ Deno.serve(async (req: Request) => {
       .single()
 
     if (prodErr || !product) {
-      return json({ message: 'Produto não encontrado' }, 404)
+      return json({ message: 'Produto não encontrado' }, 404, req)
     }
 
     // 2) Find or create Asaas customer
@@ -74,7 +90,8 @@ Deno.serve(async (req: Request) => {
     }
 
     if (!customer?.id) {
-      return json({ message: 'Erro ao criar cliente no Asaas', detail: customer }, 500)
+      console.error('Asaas customer creation failed:', customer)
+      return json({ message: 'Erro ao criar cliente no gateway de pagamento' }, 500, req)
     }
 
     let payment = null
@@ -147,8 +164,9 @@ Deno.serve(async (req: Request) => {
       bankSlipUrl: payment?.bankSlipUrl || null,
       pixData: pixData || null,
       status: payment?.status || 'PENDING',
-    })
+    }, 200, req)
   } catch (err) {
-    return json({ message: (err as Error).message }, 500)
+    console.error('asaas-checkout error:', err)
+    return json({ message: 'Erro interno ao processar checkout' }, 500, req)
   }
 })

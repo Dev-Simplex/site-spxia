@@ -3,8 +3,10 @@ import ReCAPTCHA from 'react-google-recaptcha'
 import { supabase } from '../lib/supabase'
 import Logo from '../components/Logo'
 
-// Troque pela sua Site Key de produção
-const RECAPTCHA_SITE_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+const RECAPTCHA_SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY
+if (!RECAPTCHA_SITE_KEY) {
+  console.warn('VITE_RECAPTCHA_SITE_KEY not configured — Diagnóstico form will not load reCAPTCHA')
+}
 
 const questions = [
   { id: 'q1', label: 'Qual é o principal objetivo da empresa ao investir em IA?', placeholder: 'Ex.: aumentar vendas, reduzir custos, ganhar produtividade, melhorar atendimento, automatizar processos.' },

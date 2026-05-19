@@ -1,6 +1,10 @@
+-- Requires: migrations/2026-05-19-security-hardening.sql (creates app.get_secret() + vault.ANTHROPIC_API_KEY)
+-- Default model intentionally pinned to a current Sonnet — update as needed.
 CREATE OR REPLACE FUNCTION public.generate_diagnostic_analysis(p_diagnostic_id UUID)
 RETURNS JSONB
-LANGUAGE plpgsql SECURITY DEFINER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, extensions, app
 AS $$
 DECLARE
   v_diag RECORD;
@@ -9,7 +13,13 @@ DECLARE
   v_res extensions.http_response;
   v_body JSONB;
   v_analysis TEXT;
+  v_api_key TEXT;
 BEGIN
+  v_api_key := app.get_secret('ANTHROPIC_API_KEY');
+  IF v_api_key IS NULL OR v_api_key = '' OR v_api_key = 'REPLACE_ME' THEN
+    RETURN jsonb_build_object('error', true, 'message', 'ANTHROPIC_API_KEY not configured in vault');
+  END IF;
+
   SELECT * INTO v_diag FROM public.diagnostics WHERE id = p_diagnostic_id;
   IF NOT FOUND THEN
     RETURN jsonb_build_object('error', true, 'message', 'Diagnóstico não encontrado');
@@ -50,7 +60,7 @@ Seja direto, técnico e prático. Foque em ações concretas e ROI mensurável.'
     'POST',
     'https://api.anthropic.com/v1/messages',
     ARRAY[
-      extensions.http_header('x-api-key', 'sk-ant-api03-placeholder'),
+      extensions.http_header('x-api-key', v_api_key),
       extensions.http_header('anthropic-version', '2023-06-01'),
       extensions.http_header('Content-Type', 'application/json')
     ],

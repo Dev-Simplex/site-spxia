@@ -1,16 +1,23 @@
+-- Requires: migrations/2026-05-19-security-hardening.sql (creates app.get_secret() + vault.ASAAS_API_KEY)
 CREATE OR REPLACE FUNCTION public.asaas_request(
   p_method TEXT,
   p_path TEXT,
   p_body JSONB DEFAULT NULL
 ) RETURNS JSONB
-LANGUAGE plpgsql SECURITY DEFINER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, extensions, app
 AS $$
 DECLARE
-  v_api_key TEXT := '$aact_prod_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjI3ZTQwNWJlLWFiNzctNDA4Ni04ZThmLWQ2MjFiZWI4M2VmMjo6JGFhY2hfYzc4ODBiODItYzdiZS00MDk5LWI3NjItOTNkYmE5OGNlYzZj';
+  v_api_key TEXT;
   v_url TEXT := 'https://api.asaas.com' || p_path;
   v_headers extensions.http_header[];
   v_res extensions.http_response;
 BEGIN
+  v_api_key := app.get_secret('ASAAS_API_KEY');
+  IF v_api_key IS NULL OR v_api_key = '' THEN
+    RAISE EXCEPTION 'ASAAS_API_KEY not configured in vault';
+  END IF;
   v_headers := ARRAY[extensions.http_header('access_token', v_api_key)];
 
   IF p_method = 'GET' THEN

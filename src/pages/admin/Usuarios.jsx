@@ -58,9 +58,8 @@ export default function Usuarios() {
     }
     setSavingPassword(true)
     setPasswordMsg({ type: '', text: '' })
-    const { data, error } = await supabase.rpc('change_user_password', {
-      target_user_id: editing.id,
-      new_password: newPassword,
+    const { data, error } = await supabase.functions.invoke('change-user-password', {
+      body: { target_user_id: editing.id, new_password: newPassword },
     })
     if (error) {
       setPasswordMsg({ type: 'error', text: error.message })
