@@ -1,0 +1,192 @@
+/*
+ * Efeitos visuais compartilhados pelas seções institucionais.
+ * Segue o padrão de components/ui/marquee.css: o CSS mora ao lado do
+ * componente em vez de ir para o globals.css.
+ *
+ * Todas as animações daqui são desligadas em prefers-reduced-motion: reduce
+ * (bloco no final do arquivo) — o estado final permanece legível sem motion.
+ */
+
+/* Varredura de brilho sobre texto (kickers / labels mono). */
+@keyframes spx-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* Anel que expande e desaparece — usado atrás de ícones-selo. */
+@keyframes spx-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.55;
+  }
+  70% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+}
+
+/* Feixe horizontal atravessando uma hairline. */
+@keyframes spx-sweep {
+  0% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(110%);
+  }
+}
+
+/* Piscar suave de pontos/nós dentro dos mockups SVG. */
+@keyframes spx-blink {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Traço percorrendo um path (fluxo de dados nos glyphs). */
+@keyframes spx-flow {
+  from {
+    stroke-dashoffset: 32;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Flutuação mínima — profundidade sem chamar atenção. */
+@keyframes spx-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Respiração de opacidade para halos de fundo. */
+@keyframes spx-breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.spx-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    var(--spx-shimmer-base, #888888) 0%,
+    var(--spx-shimmer-base, #888888) 42%,
+    var(--spx-shimmer-highlight, #fefefe) 50%,
+    var(--spx-shimmer-base, #888888) 58%,
+    var(--spx-shimmer-base, #888888) 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation-name: spx-shimmer;
+  animation-duration: var(--spx-shimmer-duration, 6s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.spx-ring {
+  animation-name: spx-ring;
+  animation-duration: 2.8s;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  animation-iteration-count: infinite;
+}
+
+.spx-sweep {
+  animation-name: spx-sweep;
+  animation-duration: var(--spx-sweep-duration, 7s);
+  animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+  animation-iteration-count: infinite;
+}
+
+.spx-blink {
+  animation-name: spx-blink;
+  animation-duration: var(--spx-blink-duration, 2.4s);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.spx-flow {
+  stroke-dasharray: 4 12;
+  animation-name: spx-flow;
+  animation-duration: var(--spx-flow-duration, 2.2s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.spx-float {
+  animation-name: spx-float;
+  animation-duration: var(--spx-float-duration, 7s);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.spx-breathe {
+  animation-name: spx-breathe;
+  animation-duration: var(--spx-breathe-duration, 9s);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spx-shimmer,
+  .spx-ring,
+  .spx-sweep,
+  .spx-blink,
+  .spx-flow,
+  .spx-float,
+  .spx-breathe {
+    animation: none;
+  }
+
+  /* Sem a varredura, o texto precisa voltar a ter cor sólida. */
+  .spx-shimmer {
+    background-image: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: var(--spx-shimmer-base, #888888);
+  }
+
+  .spx-ring {
+    opacity: 0.35;
+  }
+
+  .spx-flow {
+    stroke-dasharray: none;
+  }
+}
+
+/*
+ * Alto contraste forçado (Windows): background-clip: text deixaria o kicker
+ * invisível, então o texto volta a ser pintado normalmente.
+ */
+@media (forced-colors: active) {
+  .spx-shimmer {
+    background-image: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: CanvasText;
+    animation: none;
+  }
+}

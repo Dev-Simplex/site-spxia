@@ -1,0 +1,59 @@
+# SPXIA — Intelligence and Automation
+
+> A SPXIA é a divisão de inteligência artificial e automação da Simplex Soluções (Mato Grosso, Brasil). Consultoria, desenvolvimento de sistemas, automações e projetos de IA sob medida — da estratégia à produção, com resultados mensuráveis.
+
+Seu negócio precisa de IA que funciona. Não de promessas.
+
+## Quem somos
+
+Somos parceiros estratégicos de empresas que querem usar IA para resolver problemas reais — não para seguir tendências. Da consultoria ao desenvolvimento, da automação ao treinamento: entregamos projetos completos, com metodologia própria, testados em produção e focados em retorno financeiro.
+
+Valores: Estratégia + Execução · Rigor de Engenharia · Resultados Rápidos · Parceria de Longo Prazo.
+
+Números: 50+ projetos entregues · 40+ automações em produção · 3x ROI médio · 80% de redução de tempo em processos manuais · 100% dos clientes com ROI positivo.
+
+## Serviços
+
+- Consultoria em IA: diagnóstico do negócio, identificação de oportunidades e roadmap de implementação com ROI projetado.
+- Desenvolvimento de Sistemas: SaaS, plataformas web, aplicações internas, APIs e integrações com IA embarcada.
+- Automações Inteligentes: workflows com n8n, WhatsApp, CRM, financeiro, e-mail e qualquer API. Monitorados 24/7.
+- Projetos de IA: agentes de IA, chatbots, análise de dados, geração de conteúdo e assistentes virtuais.
+- Mentoria e Treinamento: capacitação para times e líderes — IA no dia a dia, ferramentas práticas, estratégia e implementação.
+- Assessoria Contínua: acompanhamento mensal — evolução dos projetos, novas oportunidades de IA, suporte técnico e estratégico.
+
+## Como funciona
+
+1. Diagnóstico — análise do negócio e relatório com ROI projetado.
+2. Estratégia — roadmap com projetos, ordem, ferramentas e investimento.
+3. Execução — desenvolvimento com arquitetura, testes e documentação; entregas semanais.
+4. Evolução — monitoramento, otimização e assessoria contínua.
+
+## Cases em produção
+
+- CopilotAB: plataforma de automação com agentes de IA e WhatsApp — atendimento inteligente e qualificação de leads.
+- ChatSPX: assistente virtual com IA conversacional avançada e bases de conhecimento customizadas — https://www.chatspx.com.br/
+- Gestão de Financiamento e Fomento (energia solar): propostas, simulações financeiras e relatórios gerenciais.
+- Sistema de Ordens de Serviço: gestão de OS com financeiro, estoque e clientes — redução de 60% no tempo de atendimento.
+- Captador Inteligente: prospecção B2B com IA — identificação, qualificação e organização automática de leads.
+- Agentes de IA no WhatsApp: atendimento 24/7 com qualificação e encaminhamento — redução de 80% no tempo de resposta.
+
+## Mentoria e treinamento
+
+- IA para Líderes de Negócio (CEOs, diretores, gestores): oportunidades, ROI e decisões de investimento.
+- IA para Times Técnicos (devs, tech leads, analistas): Claude Code, agentes, automações com n8n e APIs.
+- Mentoria Individual (empreendedores e profissionais): sessões semanais com plano de ação.
+
+## Contato
+
+- E-mail: contato@simplexsolucoes.com.br
+- Localização: Mato Grosso, Brasil
+- Site: https://spx.ia.br
+- Diagnóstico gratuito: https://spx.ia.br/diagnostico
+
+## Links
+
+- [Página inicial](https://spx.ia.br)
+- [Política de privacidade](https://spx.ia.br/privacy)
+- [Termos de uso](https://spx.ia.br/terms)
+- [ChatSPX (case)](https://www.chatspx.com.br/)
+- [Simplex Soluções](https://simplexsolucoes.com.br)

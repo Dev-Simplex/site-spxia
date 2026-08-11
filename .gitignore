@@ -5,12 +5,28 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+.pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
+
+# Build outputs
 dist
 dist-ssr
 *.local
+
+# Next.js
+/.next/
+/out/
+/build
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Vercel
+.vercel
 
 # Secrets — never commit
 .env
@@ -29,3 +45,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Artefatos do Playwright MCP (screenshots/snapshots de sessão)
+.playwright-mcp/

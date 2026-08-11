@@ -1,0 +1,108 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* Tema único dark da marca SPXIA — preto #1A1A1A, vermelho #F90108, branco #FEFEFE */
+:root {
+  --background: #1a1a1a;
+  --foreground: #fefefe;
+  --card: #212121;
+  --card-foreground: #fefefe;
+  --popover: #212121;
+  --popover-foreground: #fefefe;
+  --primary: #f90108;
+  --primary-foreground: #fefefe;
+  /* Texto vermelho pequeno (kickers, labels, links): #f90108 dá 4.17:1 sobre
+     #1a1a1a e 3.86:1 sobre #212121 — abaixo do AA (4.5:1). Este tom mais claro
+     dá 5.26:1 / 4.87:1. Títulos grandes e superfícies continuam em --primary. */
+  --primary-text: #ff4a4f;
+  /* Fundo de botão com rótulo branco pequeno: #f90108 dá 4.13–4.17:1 com
+     #fefefe; este tom dá 4.80:1 mantendo o vermelho da marca. */
+  --primary-btn: #e60107;
+  --secondary: #2d2d2d;
+  --secondary-foreground: #fefefe;
+  --muted: #2d2d2d;
+  --muted-foreground: #888888;
+  --accent: #2d2d2d;
+  --accent-foreground: #fefefe;
+  --destructive: #f90108;
+  --destructive-foreground: #fefefe;
+  --border: #3d3d3d;
+  --input: #3d3d3d;
+  --ring: #f90108;
+  --radius: 0.625rem;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-serif: var(--font-dm-serif);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-text: var(--primary-text);
+  --color-primary-btn: var(--primary-btn);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /*
+   * O user-agent usa `cursor: default` em <button> — só <a href> ganha a
+   * mãozinha automaticamente. Sem isto, todo botão do site (trocar idioma,
+   * abrir menu, enviar formulário) parece não clicável. Resolver na base evita
+   * ter que lembrar de `cursor-pointer` em cada componente.
+   */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  label[for],
+  summary {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+}
+
+/* MagicUI shine-border (components/ui/shine-border.tsx) */
+@theme inline {
+  --animate-shine: shine var(--duration) infinite linear;
+
+  @keyframes shine {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    to {
+      background-position: 0% 0%;
+    }
+  }
+}
