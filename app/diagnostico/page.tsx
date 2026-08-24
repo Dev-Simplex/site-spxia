@@ -616,7 +616,7 @@ export default function DiagnosticoPage() {
         </div>
 
         <p className="mt-6 text-center font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-muted-foreground/70">
-          SPX(IA) · seus dados são usados apenas para a análise do diagnóstico
+          SPX IA · seus dados são usados apenas para a análise do diagnóstico
         </p>
       </div>
     </div>

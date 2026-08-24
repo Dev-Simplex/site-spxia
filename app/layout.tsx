@@ -60,7 +60,7 @@ export const metadata: Metadata = {
         url: '/og.png',
         width: 1200,
         height: 630,
-        alt: 'SPX(IA) | Intelligence and Automation',
+        alt: 'SPX IA | Intelligence and Automation',
       },
     ],
   },
@@ -70,11 +70,14 @@ export const metadata: Metadata = {
     description,
     images: ['/og.png'],
   },
+  // O favicon vem de app/favicon.ico, que o Next declara sozinho. Ele carrega
+  // três desenhos (16, 32 e 48) e o de 16px é feito na grade de pixel, não
+  // escalado: nesse tamanho os vãos do bloco ⟩IA⟨ medem 0,44px, repartem tinta
+  // entre pixels vizinhos e o símbolo empasta numa mancha.
+  //
+  // Não declarar o /icon.svg aqui: navegador que aceita favicon em SVG passa a
+  // usá-lo em TODOS os tamanhos, inclusive 16px, e o .ico deixa de valer.
   icons: {
-    icon: [
-      { url: '/icon.svg', type: 'image/svg+xml' },
-      { url: '/icon-32.png', sizes: '32x32', type: 'image/png' },
-    ],
     apple: '/apple-icon.png',
   },
 }
