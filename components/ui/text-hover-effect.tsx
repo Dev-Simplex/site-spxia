@@ -4,10 +4,21 @@ import { useCallback, useId, useRef, useState, type PointerEvent } from "react"
 import { motion } from "motion/react"
 
 interface TextHoverEffectProps {
+  /** Rótulo acessível; vira o lettering quando `paths` não é informado. */
   text: string
+  /**
+   * Contornos a desenhar no lugar do lettering — use para traçar a marca de
+   * verdade em vez de aproximá-la com a fonte do site. Vários subcaminhos
+   * podem ser concatenados num `d` só.
+   */
+  paths?: string
+  /** Obrigatório junto de `paths`: a caixa dos contornos. */
+  viewBox?: string
   duration?: number
   className?: string
 }
+
+const TEXT_VIEWBOX = "0 0 300 100"
 
 /**
  * Aceternity UI — text-hover-effect.
@@ -20,6 +31,8 @@ interface TextHoverEffectProps {
  */
 export function TextHoverEffect({
   text,
+  paths,
+  viewBox,
   duration = 0.12,
   className,
 }: TextHoverEffectProps) {
@@ -53,7 +66,7 @@ export function TextHoverEffect({
       aria-label={text}
       width="100%"
       height="100%"
-      viewBox="0 0 300 100"
+      viewBox={paths ? (viewBox ?? TEXT_VIEWBOX) : TEXT_VIEWBOX}
       xmlns="http://www.w3.org/2000/svg"
       onPointerEnter={handlePointerEnter}
       onPointerLeave={() => setHovered(false)}
@@ -85,36 +98,65 @@ export function TextHoverEffect({
         </mask>
       </defs>
 
-      <motion.text
-        x="50%"
-        y="50%"
-        textAnchor="middle"
-        dominantBaseline="middle"
-        strokeWidth="0.45"
-        className="fill-transparent stroke-[#3d3d3d] font-sans text-7xl font-black tracking-tight"
-        // whileInView: o traço de 4s desenhava no mount, muito antes de o
-        // rodapé aparecer — animando atributos SVG enquanto o usuário lê o hero.
-        initial={{ strokeDashoffset: 1000, strokeDasharray: 1000 }}
-        whileInView={{ strokeDashoffset: 0, strokeDasharray: 1000 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 4, ease: "easeInOut" }}
-      >
-        {text}
-      </motion.text>
+      {paths ? (
+        <>
+          {/* pathLength=1 normaliza o comprimento: o dash funciona igual
+              independente de quantos subcaminhos a marca tenha. */}
+          <motion.path
+            d={paths}
+            fill="none"
+            strokeWidth="2.2"
+            className="stroke-[#3d3d3d]"
+            pathLength={1}
+            // whileInView: o traço de 4s desenhava no mount, muito antes de o
+            // rodapé aparecer — animando atributos SVG enquanto o usuário lê o hero.
+            initial={{ strokeDashoffset: 1, strokeDasharray: 1 }}
+            whileInView={{ strokeDashoffset: 0, strokeDasharray: 1 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 4, ease: "easeInOut" }}
+          />
+          <path
+            d={paths}
+            fill="none"
+            stroke={`url(#${gradientId})`}
+            strokeWidth="2.8"
+            mask={`url(#${maskId})`}
+            className="transition-opacity duration-300"
+            style={{ opacity: hovered ? 1 : 0 }}
+          />
+        </>
+      ) : (
+        <>
+          <motion.text
+            x="50%"
+            y="50%"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            strokeWidth="0.45"
+            className="fill-transparent stroke-[#3d3d3d] font-sans text-7xl font-black tracking-tight"
+            initial={{ strokeDashoffset: 1000, strokeDasharray: 1000 }}
+            whileInView={{ strokeDashoffset: 0, strokeDasharray: 1000 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 4, ease: "easeInOut" }}
+          >
+            {text}
+          </motion.text>
 
-      <text
-        x="50%"
-        y="50%"
-        textAnchor="middle"
-        dominantBaseline="middle"
-        stroke={`url(#${gradientId})`}
-        strokeWidth="0.55"
-        mask={`url(#${maskId})`}
-        className="fill-transparent font-sans text-7xl font-black tracking-tight transition-opacity duration-300"
-        style={{ opacity: hovered ? 1 : 0 }}
-      >
-        {text}
-      </text>
+          <text
+            x="50%"
+            y="50%"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            stroke={`url(#${gradientId})`}
+            strokeWidth="0.55"
+            mask={`url(#${maskId})`}
+            className="fill-transparent font-sans text-7xl font-black tracking-tight transition-opacity duration-300"
+            style={{ opacity: hovered ? 1 : 0 }}
+          >
+            {text}
+          </text>
+        </>
+      )}
     </svg>
   )
 }

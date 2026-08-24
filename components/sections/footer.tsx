@@ -3,12 +3,13 @@
 import dynamic from "next/dynamic"
 import { Mail, MapPin } from "lucide-react"
 
+import { BRAND_VIEWBOX, SYMBOL_IN_LOCKUP, WORDMARK } from "@/components/brand-paths"
 import { DotPattern } from "@/components/ui/dot-pattern"
 import { UnderlineLink } from "@/components/ui/underline-link"
 import { useAnimationScope } from "@/hooks/use-animation-scope"
 import { useI18n } from "@/lib/i18n/context"
 
-// Lettering decorativo no rodapé (mantém aria-label): fora do bundle inicial.
+// Marca traçada no rodapé (mantém aria-label): fora do bundle inicial.
 const TextHoverEffect = dynamic(
   () => import("@/components/ui/text-hover-effect").then((m) => m.TextHoverEffect),
   { ssr: false },
@@ -73,7 +74,9 @@ export function Footer() {
           />
           <div className="h-40 w-full sm:h-56 lg:h-72">
             <TextHoverEffect
-              text="SPXIA"
+              text="SPX IA"
+              paths={WORDMARK + SYMBOL_IN_LOCKUP}
+              viewBox={BRAND_VIEWBOX.horizontal}
               duration={0.18}
               className="cursor-crosshair select-none [mask-image:linear-gradient(to_bottom,black_0%,black_58%,transparent_100%)]"
             />

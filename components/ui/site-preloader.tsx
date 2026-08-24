@@ -443,7 +443,7 @@ export function SitePreloader() {
                     offset-path (coordenadas do viewBox), com transição idêntica
                     à do dash — a ponta acompanha a borda do desenho. Em
                     browsers sem offset-path o círculo fica em (0,0), fora do
-                    viewBox (min 259,215) — clipado, invisível: degradação limpa. */}
+                    viewBox (min 910.75,0) — clipado, invisível: degradação limpa. */}
                 {!reduce && (
                   <motion.g
                     style={{
@@ -464,8 +464,11 @@ export function SitePreloader() {
                       opacity: { delay: drawn ? 0 : 0.35, duration: drawn ? 0.3 : 0.2 },
                     }}
                   >
-                    <circle r={30} fill="rgba(249,1,8,0.3)" />
-                    <circle r={11} fill="#FFE9EA" />
+                    {/* Raios em unidades do viewBox do bloco (568x321). O
+                        símbolo antigo tinha caixa ~765 de lado, então os raios
+                        caíram na mesma proporção para manter o tamanho visto. */}
+                    <circle r={22} fill="rgba(249,1,8,0.3)" />
+                    <circle r={8} fill="#FFE9EA" />
                   </motion.g>
                 )}
 
