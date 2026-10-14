@@ -193,6 +193,7 @@ const en: Dictionary = {
       title: 'Free diagnosis',
       meta: '30 minutes · online or in person',
       days: ['MON', 'TUE', 'WED', 'THU', 'FRI'],
+      today: 'TODAY',
       dayLegend: 'Choose a day',
       slotLegend: 'Choose a time',
       confirm: 'Confirm time',

@@ -191,6 +191,7 @@ const pt = {
       title: 'Diagnóstico gratuito',
       meta: '30 minutos · online ou presencial',
       days: ['SEG', 'TER', 'QUA', 'QUI', 'SEX'],
+      today: 'HOJE',
       dayLegend: 'Escolha o dia',
       slotLegend: 'Escolha o horário',
       confirm: 'Confirmar horário',

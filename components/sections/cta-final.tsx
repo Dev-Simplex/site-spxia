@@ -14,21 +14,36 @@ import { cn } from "@/lib/utils"
 
 const DAY_COUNT = 5
 const SLOTS = ["09:00", "10:30", "14:00", "15:30", "16:00", "17:30"]
+const MINUTE = 60_000
+// Pedido por e-mail precisa de tempo para alguém responder.
+const MIN_LEAD = 60 * MINUTE
 
-// A home é estática: os dias saem do relógio de quem visita, depois da
-// hidratação (no servidor o valor é null).
-const subscribeNever = () => () => {}
-const todayOnClient = () => new Date().setHours(0, 0, 0, 0)
-const todayOnServer = () => null
+// A home é estática: dia e hora saem do relógio de quem visita, depois da
+// hidratação (no servidor o valor é null), e andam de minuto em minuto.
+const subscribeMinute = (onChange: () => void) => {
+  const id = setInterval(onChange, MINUTE)
+  return () => clearInterval(id)
+}
+const nowOnClient = () => Math.floor(Date.now() / MINUTE) * MINUTE
+const nowOnServer = () => null
 
-/** Próximos dias úteis a partir de amanhã. */
-function nextBusinessDays(today: number) {
+function slotStart(day: Date, time: string) {
+  const [hours, minutes] = time.split(":").map(Number)
+  return new Date(day).setHours(hours, minutes, 0, 0)
+}
+
+const isPast = (day: Date, time: string, now: number) => slotStart(day, time) < now + MIN_LEAD
+
+/** Dias úteis a partir de hoje; hoje só entra se ainda sobra horário. */
+function bookableDays(now: number) {
   const days: Date[] = []
-  const date = new Date(today)
+  const date = new Date(now)
+  date.setHours(0, 0, 0, 0)
   while (days.length < DAY_COUNT) {
-    date.setDate(date.getDate() + 1)
     const weekday = date.getDay()
-    if (weekday !== 0 && weekday !== 6) days.push(new Date(date))
+    const isBusinessDay = weekday !== 0 && weekday !== 6
+    if (isBusinessDay && SLOTS.some((time) => !isPast(date, time, now))) days.push(new Date(date))
+    date.setDate(date.getDate() + 1)
   }
   return days
 }
@@ -48,23 +63,28 @@ export function CtaFinal() {
   const booking = contact.booking
   const reveal = useReveal()
   const calendarIcon = useRef<CalendarCheckIconHandle>(null)
-  const today = useSyncExternalStore(subscribeNever, todayOnClient, todayOnServer)
-  const [dayIndex, setDayIndex] = useState(0)
+  const now = useSyncExternalStore(subscribeMinute, nowOnClient, nowOnServer)
+  const [dayKey, setDayKey] = useState<number | null>(null)
   const [slot, setSlot] = useState<string | null>(null)
 
-  const days = today === null ? [] : nextBusinessDays(today)
-  const when = days[dayIndex] && longDate(days[dayIndex], t.lang)
+  const days = now === null ? [] : bookableDays(now)
+  // Se o dia escolhido sai da lista (o horário de hoje acabou), volta para o primeiro.
+  const day = days.find((date) => date.getTime() === dayKey) ?? days[0]
+  const todayKey = now === null ? null : new Date(now).setHours(0, 0, 0, 0)
+  const isOpen = (time: string) => now !== null && day !== undefined && !isPast(day, time, now)
+  const chosenSlot = slot && isOpen(slot) ? slot : null
+  const when = day && longDate(day, t.lang)
   const requestHref =
-    when && slot
+    when && chosenSlot
       ? mailRequest(
           contact.email,
-          `${booking.title} · ${when} · ${slot}`,
-          booking.request.replace("{when}", when).replace("{time}", slot),
+          `${booking.title} · ${when} · ${chosenSlot}`,
+          booking.request.replace("{when}", when).replace("{time}", chosenSlot),
         )
       : undefined
 
   return (
-    // Uma das duas faixas escuras do site (decisão 3): Azul Pulso.
+    // A única faixa escura do site (decisão 3): Azul Pulso.
     <section id="contato" className="relative isolate scroll-mt-24 overflow-hidden bg-primary text-white">
       <div aria-hidden="true" className="pointer-events-none absolute -right-48 -top-24 -z-10 opacity-[0.08]">
         <Logo variant="symbol" tone="white" height={720} />
@@ -127,7 +147,7 @@ export function CtaFinal() {
           <fieldset className="mt-6">
             <legend className="sr-only">{booking.dayLegend}</legend>
             <div className="grid min-h-[4.125rem] grid-cols-5 gap-2">
-              {days.map((date, index) => (
+              {days.map((date) => (
                 <label
                   key={date.getTime()}
                   className={cn(
@@ -140,10 +160,10 @@ export function CtaFinal() {
                     name="booking-day"
                     className="sr-only"
                     aria-label={longDate(date, t.lang)}
-                    checked={index === dayIndex}
-                    onChange={() => setDayIndex(index)}
+                    checked={date === day}
+                    onChange={() => setDayKey(date.getTime())}
                   />
-                  {booking.days[date.getDay() - 1]}
+                  {date.getTime() === todayKey ? booking.today : booking.days[date.getDay() - 1]}
                   <b className="mt-0.5 block text-lg font-semibold text-foreground group-has-checked:text-primary">
                     {date.getDate()}
                   </b>
@@ -159,7 +179,7 @@ export function CtaFinal() {
                 <label
                   key={time}
                   className={cn(
-                    "cursor-pointer rounded-xl border border-border py-2.5 text-center text-sm font-semibold transition-colors hover:border-brand-green has-checked:border-brand-green has-checked:bg-brand-green has-checked:text-white",
+                    "cursor-pointer rounded-xl border border-border py-2.5 text-center text-sm font-semibold transition-colors hover:border-brand-green has-checked:border-brand-green has-checked:bg-brand-green has-checked:text-white has-disabled:pointer-events-none has-disabled:text-muted-foreground/45 has-disabled:line-through",
                     optionFocus,
                   )}
                 >
@@ -167,7 +187,8 @@ export function CtaFinal() {
                     type="radio"
                     name="booking-slot"
                     className="sr-only"
-                    checked={time === slot}
+                    disabled={!isOpen(time)}
+                    checked={time === chosenSlot}
                     onChange={() => setSlot(time)}
                   />
                   {time}
