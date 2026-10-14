@@ -10,7 +10,7 @@ import { useI18n } from "@/lib/i18n/context"
 const LEGAL_ENTITY = "SPX Inteligência e Desenvolvimento LTDA · CNPJ 68.387.997/0001-18"
 
 const linkClass =
-  "rounded-sm transition-colors hover:text-white focus-visible:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+  "rounded-sm transition-colors hover:text-primary focus-visible:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 
 export function Footer() {
   const { t } = useI18n()
@@ -47,13 +47,13 @@ export function Footer() {
   ]
 
   return (
-    // A outra faixa escura do site (decisão 3): Azul Profundo.
-    <footer className="bg-brand-deep text-white/75">
+    // Rodapé claro (decisão 3 revista em 14/10): só o CTA final fica em azul.
+    <footer className="border-t border-border bg-surface text-muted-foreground">
       <motion.div className="mx-auto w-full max-w-7xl px-4 pb-8 pt-16 md:px-8 md:pt-20 lg:px-10" {...reveal()}>
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-[1.5fr_1fr_1fr_1.2fr] lg:gap-12">
           <div className="col-span-2 sm:col-span-3 lg:col-span-1">
             <a href="/" className={`inline-block ${linkClass}`}>
-              <Logo height={30} tone="white" />
+              <Logo height={30} />
             </a>
             <p className="mt-5 max-w-[300px] text-[0.9375rem]">{f.tagline}</p>
             <p className="mt-3 text-[0.9375rem]">{t.contato.location}</p>
@@ -61,7 +61,7 @@ export function Footer() {
 
           {columns.map((column) => (
             <nav key={column.title} aria-label={column.title} className={column.className}>
-              <h2 className="text-sm font-semibold text-white">{column.title}</h2>
+              <h2 className="text-sm font-semibold text-foreground">{column.title}</h2>
               <ul className="mt-5 space-y-2.5 text-[0.9375rem]">
                 {column.links.map((link) => (
                   <li key={link.label}>
@@ -75,7 +75,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-14 flex flex-col gap-4 border-t border-white/15 pt-6 text-[0.8125rem] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-4 border-t border-border pt-6 text-[0.8125rem] sm:flex-row sm:items-center sm:justify-between">
           <p>
             {f.copy} · {LEGAL_ENTITY}
           </p>

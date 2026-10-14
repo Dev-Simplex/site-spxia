@@ -193,7 +193,11 @@ const en: Dictionary = {
       title: 'Free diagnosis',
       meta: '30 minutes · online or in person',
       days: ['MON', 'TUE', 'WED', 'THU', 'FRI'],
+      dayLegend: 'Choose a day',
+      slotLegend: 'Choose a time',
       confirm: 'Confirm time',
+      request: "Hi! I'd like to book the free diagnosis on {when}, at {time}.\n\nName:\nCompany:\nPhone:",
+      note: 'Opens your email with the request ready. We confirm there.',
     },
   },
 

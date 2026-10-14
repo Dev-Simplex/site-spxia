@@ -191,7 +191,11 @@ const pt = {
       title: 'Diagnóstico gratuito',
       meta: '30 minutos · online ou presencial',
       days: ['SEG', 'TER', 'QUA', 'QUI', 'SEX'],
+      dayLegend: 'Escolha o dia',
+      slotLegend: 'Escolha o horário',
       confirm: 'Confirmar horário',
+      request: 'Olá! Quero agendar o diagnóstico gratuito para {when}, às {time}.\n\nNome:\nEmpresa:\nTelefone:',
+      note: 'Abre seu e-mail com o pedido pronto. Confirmamos por lá.',
     },
   },
 

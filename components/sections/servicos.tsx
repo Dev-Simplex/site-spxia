@@ -174,7 +174,7 @@ function Inbox({ c }: { c: ChatCopy }) {
     <div aria-hidden className="mt-6 flex flex-1 flex-col overflow-hidden rounded-[18px] border border-border">
       <div className="flex items-center justify-between border-b border-border px-4 py-3.5 text-sm font-semibold text-foreground sm:px-5">
         {c.inbox}
-        <span className="rounded-full bg-brand-green px-2.5 py-1 text-xs font-bold text-brand-deep">{c.live}</span>
+        <span className="rounded-full bg-brand-green px-2.5 py-1 text-xs font-bold text-white">{c.live}</span>
       </div>
       <div className="flex flex-wrap gap-2 border-b border-border px-4 py-3 sm:px-5">
         {c.channels.map((channel, i) => (

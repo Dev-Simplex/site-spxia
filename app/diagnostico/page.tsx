@@ -13,6 +13,7 @@ import {
   ArrowRight,
   Check,
   Loader2,
+  Mail,
   X,
 } from 'lucide-react'
 import ReCAPTCHA from 'react-google-recaptcha'
@@ -265,6 +266,8 @@ const copy = {
     "start": "Para",
     "startEm": "começar",
     "intro": "Conte um pouco sobre você e sua empresa.",
+    "direct": "Prefere conversar direto?",
+    "directSubject": "Quero conversar com a SPXia",
     "name": "Seu nome",
     "fullName": "Nome completo",
     "email": "E-mail",
@@ -319,6 +322,8 @@ const copy = {
     "start": "Let’s",
     "startEm": "get started",
     "intro": "Tell us a little about you and your company.",
+    "direct": "Rather talk to us directly?",
+    "directSubject": "I'd like to talk to SPXia",
     "name": "Your name",
     "fullName": "Full name",
     "email": "Email",
@@ -367,7 +372,7 @@ const copy = {
 }
 
 export default function DiagnosticoPage() {
-  const { locale } = useI18n()
+  const { locale, t } = useI18n()
   const c = copy[locale]
   const questions = questionCopy[locale]
   const reduceMotion = useReducedMotion()
@@ -539,6 +544,18 @@ export default function DiagnosticoPage() {
                   titleEm={c.startEm}
                   desc={c.intro}
                 />
+
+                {/* Atalho para quem não quer o questionário (ainda não há WhatsApp). */}
+                <p className="-mt-3 mb-7 flex flex-wrap items-center gap-x-2.5 gap-y-1 rounded-2xl bg-surface px-4 py-3 text-sm text-foreground">
+                  {c.direct}
+                  <a
+                    href={`mailto:${t.contato.email}?subject=${encodeURIComponent(c.directSubject)}`}
+                    className="inline-flex items-center gap-1.5 font-semibold text-primary underline-offset-4 hover:underline"
+                  >
+                    <Mail aria-hidden="true" className="size-4" />
+                    {t.contato.email}
+                  </a>
+                </p>
 
                 <form onSubmit={handleContactSubmit} className="space-y-5">
                   <div className="grid gap-5 sm:grid-cols-2">

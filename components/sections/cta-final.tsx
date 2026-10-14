@@ -1,28 +1,67 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState, useSyncExternalStore } from "react"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { motion } from "motion/react"
 
 import { CalendarCheckIcon, type CalendarCheckIconHandle } from "@/components/icons/animated/calendar-check"
 import { Logo } from "@/components/logo"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { useReveal } from "@/components/ui/motion-kit"
 import { useI18n } from "@/lib/i18n/context"
 import { cn } from "@/lib/utils"
 
-// Agenda ilustrativa (decisão 12, mockup): só visual, sem lógica de horários.
-const FIRST_DAY = 13
-const SELECTED_DAY = 2
+const DAY_COUNT = 5
 const SLOTS = ["09:00", "10:30", "14:00", "15:30", "16:00", "17:30"]
-const SELECTED_SLOT = "10:30"
+
+// A home é estática: os dias saem do relógio de quem visita, depois da
+// hidratação (no servidor o valor é null).
+const subscribeNever = () => () => {}
+const todayOnClient = () => new Date().setHours(0, 0, 0, 0)
+const todayOnServer = () => null
+
+/** Próximos dias úteis a partir de amanhã. */
+function nextBusinessDays(today: number) {
+  const days: Date[] = []
+  const date = new Date(today)
+  while (days.length < DAY_COUNT) {
+    date.setDate(date.getDate() + 1)
+    const weekday = date.getDay()
+    if (weekday !== 0 && weekday !== 6) days.push(new Date(date))
+  }
+  return days
+}
+
+const longDate = (date: Date, lang: string) =>
+  date.toLocaleDateString(lang, { weekday: "long", day: "2-digit", month: "2-digit" })
+
+// Ainda não há agenda online nem WhatsApp: o pedido sai pronto no e-mail de quem visita.
+const mailRequest = (to: string, subject: string, body: string) =>
+  `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+
+const optionFocus = "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary"
 
 export function CtaFinal() {
   const { t } = useI18n()
   const contact = t.contato
+  const booking = contact.booking
   const reveal = useReveal()
   const calendarIcon = useRef<CalendarCheckIconHandle>(null)
+  const today = useSyncExternalStore(subscribeNever, todayOnClient, todayOnServer)
+  const [dayIndex, setDayIndex] = useState(0)
+  const [slot, setSlot] = useState<string | null>(null)
+
+  const days = today === null ? [] : nextBusinessDays(today)
+  const when = days[dayIndex] && longDate(days[dayIndex], t.lang)
+  const requestHref =
+    when && slot
+      ? mailRequest(
+          contact.email,
+          `${booking.title} · ${when} · ${slot}`,
+          booking.request.replace("{when}", when).replace("{time}", slot),
+        )
+      : undefined
 
   return (
     // Uma das duas faixas escuras do site (decisão 3): Azul Pulso.
@@ -61,14 +100,14 @@ export function CtaFinal() {
           </div>
         </motion.div>
 
-        {/* Card de agendamento do mockup: decorativo; o clique leva ao diagnóstico. */}
+        {/* Card de agendamento: escolhe dia e hora; o pedido sai pelo e-mail. */}
         <motion.div
-          aria-hidden="true"
           className="relative w-full max-w-[440px] justify-self-center rounded-[26px] bg-card p-6 text-foreground shadow-2xl shadow-brand-deep/40 sm:p-7 lg:justify-self-end"
           {...reveal(0.12)}
           onViewportEnter={() => calendarIcon.current?.startAnimation()}
         >
           <span
+            aria-hidden="true"
             className="absolute -top-5 right-8 size-11 bg-brand-green"
             style={{ mask: "url(/images/formas/estrela-4-pontas.svg) center / contain no-repeat" }}
           />
@@ -76,51 +115,73 @@ export function CtaFinal() {
             <CalendarCheckIcon
               ref={calendarIcon}
               size={20}
+              aria-hidden="true"
               className="grid size-11 shrink-0 place-items-center rounded-[14px] bg-accent text-primary"
             />
             <div>
-              <b className="block text-[1.0625rem] font-semibold">{contact.booking.title}</b>
-              <span className="text-sm text-muted-foreground">{contact.booking.meta}</span>
+              <b className="block text-[1.0625rem] font-semibold">{booking.title}</b>
+              <span className="text-sm text-muted-foreground">{booking.meta}</span>
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-5 gap-2">
-            {contact.booking.days.map((day, index) => {
-              const isSelected = index === SELECTED_DAY
-              return (
-                <div
-                  key={day}
+          <fieldset className="mt-6">
+            <legend className="sr-only">{booking.dayLegend}</legend>
+            <div className="grid min-h-[4.125rem] grid-cols-5 gap-2">
+              {days.map((date, index) => (
+                <label
+                  key={date.getTime()}
                   className={cn(
-                    "rounded-[14px] border py-2.5 text-center text-xs font-medium text-muted-foreground",
-                    isSelected ? "border-primary bg-accent" : "border-border",
+                    "group cursor-pointer rounded-[14px] border border-border py-2.5 text-center text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 has-checked:border-primary has-checked:bg-accent",
+                    optionFocus,
                   )}
                 >
-                  {day}
-                  <b className={cn("mt-0.5 block text-lg font-semibold", isSelected ? "text-primary" : "text-foreground")}>
-                    {FIRST_DAY + index}
+                  <input
+                    type="radio"
+                    name="booking-day"
+                    className="sr-only"
+                    aria-label={longDate(date, t.lang)}
+                    checked={index === dayIndex}
+                    onChange={() => setDayIndex(index)}
+                  />
+                  {booking.days[date.getDay() - 1]}
+                  <b className="mt-0.5 block text-lg font-semibold text-foreground group-has-checked:text-primary">
+                    {date.getDate()}
                   </b>
-                </div>
-              )
-            })}
-          </div>
+                </label>
+              ))}
+            </div>
+          </fieldset>
 
-          <div className="mt-3.5 grid grid-cols-3 gap-2">
-            {SLOTS.map((slot) => (
-              <span
-                key={slot}
-                className={cn(
-                  "rounded-xl border py-2.5 text-center text-sm font-semibold",
-                  slot === SELECTED_SLOT ? "border-brand-green bg-brand-green text-brand-deep" : "border-border",
-                )}
-              >
-                {slot}
-              </span>
-            ))}
-          </div>
+          <fieldset className="mt-3.5">
+            <legend className="sr-only">{booking.slotLegend}</legend>
+            <div className="grid grid-cols-3 gap-2">
+              {SLOTS.map((time) => (
+                <label
+                  key={time}
+                  className={cn(
+                    "cursor-pointer rounded-xl border border-border py-2.5 text-center text-sm font-semibold transition-colors hover:border-brand-green has-checked:border-brand-green has-checked:bg-brand-green has-checked:text-white",
+                    optionFocus,
+                  )}
+                >
+                  <input
+                    type="radio"
+                    name="booking-slot"
+                    className="sr-only"
+                    checked={time === slot}
+                    onChange={() => setSlot(time)}
+                  />
+                  {time}
+                </label>
+              ))}
+            </div>
+          </fieldset>
 
-          <Link href="/diagnostico" tabIndex={-1} className={buttonVariants({ size: "lg", className: "mt-5 w-full" })}>
-            {contact.booking.confirm}
-          </Link>
+          <Button asChild size="lg" className="mt-5 w-full aria-disabled:pointer-events-none aria-disabled:opacity-50">
+            <a href={requestHref} aria-disabled={!requestHref}>
+              {booking.confirm}
+            </a>
+          </Button>
+          <p className="mt-3 text-center text-xs text-muted-foreground">{booking.note}</p>
         </motion.div>
       </div>
     </section>

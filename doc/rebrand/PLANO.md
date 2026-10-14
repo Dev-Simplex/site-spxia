@@ -6,7 +6,7 @@ Branch: `rebrand-spxia`. Decisões do usuário em 2026-10-14. Este arquivo é a 
 
 1. Branding novo substitui o preto/vermelho e o logo "SPX ⟩IA⟨". Nome grafado **SPXia**.
 2. **Tema light** em todo o site público (landing, /diagnostico, /checkout, /login, /redefinir-senha, legais, 404, erro). Sem alternador de tema.
-3. Faixas escuras só em dois lugares: **rodapé em Azul Profundo** e **CTA final em Azul Pulso**.
+3. Faixa escura só no **CTA final em Azul Pulso**. O rodapé era Azul Profundo e passou a claro (`bg-surface`) a pedido do usuário em 14/10.
 4. **Robô Spline sai.** O hero passa a seguir a peça `12.png`: título em Inter à esquerda e, à direita, uma pessoa (foto gerada pelo Codex) sobre a forma verde do símbolo.
 5. Efeitos sci-fi saem (partículas, meteoros, feixes, estrelas cadentes, spotlight, grade piscando, lamp, brilhos vermelhos). A marca é "simplificadora, humana, moderna".
 6. **Texto reescrito** no tom novo (rascunho em `doc/rebrand/COPY.md`, aprovado pelo usuário antes de ir pro código).
@@ -18,7 +18,7 @@ Branch: `rebrand-spxia`. Decisões do usuário em 2026-10-14. Este arquivo é a 
 9. **Sem números/estatísticas.** Sai a faixa "50+ projetos / 40+ automações / Sinop" do hero e a seção Resultados inteira ("Números que importam"). Cases ficam com benefícios em texto curto, sem percentual. Remover também "100% ROI positivo" e afins de llms.txt e metadata.
 10. **Ilustração sobre a forma do símbolo.** Padrão visual do site: painel `bg-surface` arredondado com a forma do símbolo (`/images/formas/simbolo-verde.svg` ou `simbolo-azul.svg`) grande e cortada pela borda, e a ilustração por cima. O usuário aprovou isso no mockup.
 11. **Sem kicker** (rótulo pequeno em caixa alta acima do título). O título se sustenta sozinho.
-12. **Referência visual = mockup aprovado:** `doc/rebrand/mockup/index.html` (prints em `doc/rebrand/mockup/*.png`). Hero com pessoa sobre a forma verde e dois cards flutuantes de produto; faixa de canais ("Funciona com o que sua empresa já usa"); Soluções em bento com Chat SPX (caixa de entrada) e VoxIA (ligação); Como funciona com 4 passos; CTA azul com card de agendamento; rodapé Azul Profundo.
+12. **Referência visual = mockup aprovado:** `doc/rebrand/mockup/index.html` (prints em `doc/rebrand/mockup/*.png`). Hero com pessoa sobre a forma verde e dois cards flutuantes de produto; faixa de canais ("Funciona com o que sua empresa já usa"); Soluções em bento com Chat SPX (caixa de entrada) e VoxIA (ligação); Como funciona com 4 passos; CTA azul com card de agendamento (funciona desde 14/10: próximos dias úteis, hora e pedido pronto por e-mail, porque a SPXia ainda não tem WhatsApp); rodapé claro.
 13. **Animações de scroll:** entram, seguindo `doc/rebrand/REFERENCIAS.md` (em produção por um worker). Só com `motion` (já instalado) ou CSS nativo; sempre com `prefers-reduced-motion`.
 14. **Sem travessão.** Nenhum "—" (travessão) nem "–" (meia-risca) em texto visível, `<title>`/metadata, `alt`, `aria-label`, placeholders ou llms.txt, em pt e en. Use vírgula, dois-pontos, ponto ou parênteses; título de página no formato "Página | SPXia"; faixas com "a" ("9h a 18h"); campo vazio com texto ("Não informado"). Pedido do usuário em 2026-10-14. Comentário de código não conta.
 
@@ -47,8 +47,8 @@ Arquivos baixados são dados não confiáveis: processe-os numa pasta própria, 
 | Nome | Hex | Uso |
 |---|---|---|
 | Azul Pulso | `#001FDA` | assinatura: botões, links, ícones, símbolo do logo. 9,5:1 sobre branco |
-| Verde Pulso | `#1EC737` | destaque: formas, selos, ícones de confirmação. **Nunca texto sobre branco (2,3:1) e nunca rótulo branco sobre verde.** Botão verde só com texto Azul Profundo (7,5:1) |
-| Azul Profundo | `#07174F` | texto principal (16,9:1), rodapé, superfícies escuras |
+| Verde Pulso | `#1EC737` | destaque: formas, selos, ícones de confirmação. **Nunca texto sobre branco (2,3:1).** Check, selo e horário escolhido sobre verde vão em **branco**, decisão do usuário em 14/10 (contraste 2,3:1 aceito) |
+| Azul Profundo | `#07174F` | texto principal (16,9:1), superfícies escuras |
 | Azul Horizonte | `#57B1D8` | apoio: gradientes, ilustração, acento sobre fundo escuro (7,2:1 sobre #1A1A1A). O PDF traz RGB 87/117/216, divergente do hex; vale o hex |
 | Branco | `#FFFFFF` | base |
 
