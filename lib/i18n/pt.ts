@@ -108,7 +108,7 @@ const pt = {
     items: [
       {
         sector: 'AUTOMAÇÃO E AGENTES IA',
-        title: 'CopilotAB',
+        title: 'Copilot',
         desc: 'Plataforma completa de automação com agentes de IA e WhatsApp. Atendimento inteligente, qualificação de leads e gestão de conversas. Tudo automatizado e monitorado em tempo real.',
         metrics: ['Agentes de IA autônomos', 'Integração WhatsApp nativa', 'Gestão de conversas em tempo real', 'Qualificação automática de leads'],
         link: null as string | null,

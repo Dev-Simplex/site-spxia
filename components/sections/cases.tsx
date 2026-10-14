@@ -32,7 +32,7 @@ const copy: Record<Locale, SectionCopy> = {
     items: [
       {
         sector: "Sistema personalizado premium",
-        title: "CopilotAB",
+        title: "Copilot",
         desc: "Um sistema exclusivo, feito sob medida para a operação do cliente.",
         benefits: ["Projeto exclusivo", "Feito para a rotina da equipe", "Acabamento premium"],
       },
@@ -70,7 +70,7 @@ const copy: Record<Locale, SectionCopy> = {
     items: [
       {
         sector: "Premium custom system",
-        title: "CopilotAB",
+        title: "Copilot",
         desc: "An exclusive system, tailor-made for the client's operation.",
         benefits: ["Exclusive project", "Built around the team's routine", "Premium finish"],
       },

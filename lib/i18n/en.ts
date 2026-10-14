@@ -110,7 +110,7 @@ const en: Dictionary = {
     items: [
       {
         sector: 'AUTOMATION & AI AGENTS',
-        title: 'CopilotAB',
+        title: 'Copilot',
         desc: 'Complete automation platform with AI agents and WhatsApp. Intelligent customer service, lead qualification and conversation management, all automated and monitored in real time.',
         metrics: ['Autonomous AI agents', 'Native WhatsApp integration', 'Real-time conversation management', 'Automatic lead qualification'],
         link: null,

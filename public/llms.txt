@@ -27,7 +27,7 @@ SPX vem de Simplex. Ajudamos empresas a usar IA onde ela faz diferença no dia a
 
 ## Projetos
 
-- CopilotAB: sistema personalizado premium, feito sob medida para a operação do cliente.
+- Copilot: sistema personalizado premium, feito sob medida para a operação do cliente.
 - Chat SPX: assistente virtual que responde com base no conhecimento de cada empresa; https://www.chatspx.com.br/
 - Gestão de Financiamento e Fomento (energia solar): propostas, simulações, aprovações e relatórios.
 - Sistema de Ordens de Serviço: ordens de serviço, financeiro, estoque e clientes.
@@ -87,7 +87,7 @@ SPX comes from Simplex. We help companies use AI where it makes a difference day
 
 ## Projects
 
-- CopilotAB: premium custom system, tailor-made for the client’s operation.
+- Copilot: premium custom system, tailor-made for the client’s operation.
 - Chat SPX: a virtual assistant that answers from each company's own knowledge; https://www.chatspx.com.br/
 - Financing & Funding Management (solar energy): proposals, simulations, approvals and reports.
 - Service Order System: service orders, finances, inventory and customers.
