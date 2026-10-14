@@ -31,10 +31,10 @@ const copy: Record<Locale, SectionCopy> = {
     chip: "Cliente respondido na hora",
     items: [
       {
-        sector: "Atendimento com IA",
+        sector: "Sistema personalizado premium",
         title: "CopilotAB",
-        desc: "Atende pelo WhatsApp com agentes de IA e organiza cada conversa.",
-        benefits: ["WhatsApp integrado", "Contatos qualificados", "Acompanhamento em tempo real"],
+        desc: "Um sistema exclusivo, feito sob medida para a operação do cliente.",
+        benefits: ["Projeto exclusivo", "Feito para a rotina da equipe", "Acabamento premium"],
       },
       {
         sector: "Energia solar",
@@ -69,10 +69,10 @@ const copy: Record<Locale, SectionCopy> = {
     chip: "Customer answered right away",
     items: [
       {
-        sector: "AI customer service",
+        sector: "Premium custom system",
         title: "CopilotAB",
-        desc: "Serves customers on WhatsApp with AI agents and organizes every conversation.",
-        benefits: ["Built-in WhatsApp", "Qualified contacts", "Real-time monitoring"],
+        desc: "An exclusive system, tailor-made for the client's operation.",
+        benefits: ["Exclusive project", "Built around the team's routine", "Premium finish"],
       },
       {
         sector: "Solar energy",
