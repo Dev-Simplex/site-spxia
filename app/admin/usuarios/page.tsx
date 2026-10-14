@@ -11,7 +11,7 @@ const roleLabels: Record<string, string> = {
   member: "Membro",
 }
 const roleColors: Record<string, string> = {
-  admin: "#F90108",
+  admin: "var(--accent-brand-text)",
   mentor: "#60a5fa",
   member: "#4ade80",
 }
@@ -190,7 +190,7 @@ function Usuarios() {
           <div className="form-group">
             <label>Grupo de Permissões</label>
             <select value={formGroup} onChange={(e) => setFormGroup(e.target.value)}>
-              <option value="">— Sem grupo (usa padrão do role) —</option>
+              <option value="">Sem grupo (usa o padrão do role)</option>
               {groups.map((g) => (
                 <option key={g.id} value={g.id}>
                   {g.name}
@@ -214,12 +214,12 @@ function Usuarios() {
             <div>
               <span className="user-detail-label">Último update</span>
               <span>
-                {editing.updated_at ? new Date(editing.updated_at).toLocaleDateString("pt-BR") : "—"}
+                {editing.updated_at ? new Date(editing.updated_at).toLocaleDateString("pt-BR") : "Sem registro"}
               </span>
             </div>
             <div>
               <span className="user-detail-label">Bio</span>
-              <span>{editing.bio || "—"}</span>
+              <span>{editing.bio || "Não informado"}</span>
             </div>
           </div>
         </div>
@@ -294,7 +294,10 @@ function Usuarios() {
               <div className="user-avatar-col">
                 <div
                   className="sidebar-avatar"
-                  style={{ background: roleColors[u.role || ""] || "#888" }}
+                  style={{
+                    background: u.role === "admin" ? "var(--accent-brand)" : roleColors[u.role || ""] || "#888",
+                    color: u.role === "admin" ? "#fff" : "var(--black)",
+                  }}
                 >
                   {(u.full_name || "?").charAt(0).toUpperCase()}
                 </div>

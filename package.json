@@ -10,16 +10,8 @@
     "start": "next start"
   },
   "dependencies": {
-    "@radix-ui/react-label": "2.1.1",
     "@radix-ui/react-slot": "1.1.1",
-    "@radix-ui/react-switch": "1.1.2",
-    "@splinetool/react-spline": "4.1.0",
-    "@splinetool/runtime": "1.12.98",
     "@supabase/supabase-js": "^2.112.2",
-    "@tsparticles/engine": "3.9.1",
-    "@tsparticles/react": "3.0.0",
-    "@tsparticles/slim": "3.9.1",
-    "canvas-confetti": "1.9.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.454.0",
@@ -32,7 +24,6 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",
-    "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

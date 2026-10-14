@@ -132,40 +132,40 @@ function generateInsights(r: any, dev: any, mgmt: any, risk: any, integrations: 
   if (r.realMargin < 0.5)
     ins.push({
       type: "critical",
-      msg: "Margem abaixo de 50% — prejuízo oculto.",
+      msg: "Margem abaixo de 50%: prejuízo oculto.",
       action: "Aumente valor/hora ou reduza escopo.",
     })
   else if (r.realMargin <= 0.7)
-    ins.push({ type: "success", msg: "Margem saudável — precificação equilibrada." })
+    ins.push({ type: "success", msg: "Margem saudável: precificação equilibrada." })
   else
     ins.push({
       type: "warning",
-      msg: "Margem acima de 70% — verifique competitividade.",
+      msg: "Margem acima de 70%: verifique a competitividade.",
       action: "Considere adicionar mais valor ao cliente.",
     })
 
   if (risk.riskRate < 0.2)
     ins.push({
       type: "warning",
-      msg: "Risco abaixo de 20% — provavelmente subestimado.",
+      msg: "Risco abaixo de 20%: provavelmente subestimado.",
       action: "Projetos raramente têm risco abaixo de 20%.",
     })
   if (mgmt.rate < 0.15)
     ins.push({
       type: "warning",
-      msg: "Gestão abaixo de 15% — subprecificado.",
+      msg: "Gestão abaixo de 15%: subprecificado.",
       action: "Inclua reuniões, retrabalho e alinhamentos.",
     })
   if (integrations.count >= 3)
     ins.push({
       type: "warning",
-      msg: `${integrations.count} integrações — revisar escopo.`,
+      msg: `${integrations.count} integrações: revisar o escopo.`,
       action: "Cada integração pode triplicar o tempo.",
     })
   if (r.projectSize === "large" || r.projectSize === "enterprise")
     ins.push({
       type: "opportunity",
-      msg: "Projeto grande — dividir em fases.",
+      msg: "Projeto grande: dividir em fases.",
       action: "Fases reduzem risco e facilitam aprovação.",
     })
 
@@ -179,7 +179,7 @@ function generateInsights(r: any, dev: any, mgmt: any, risk: any, integrations: 
   if (dev.complexity === "high")
     ins.push({
       type: "opportunity",
-      msg: "Alta complexidade — argumento para preço premium.",
+      msg: "Alta complexidade: argumento para preço premium.",
       action: "Documente na proposta para justificar.",
     })
 
@@ -352,7 +352,7 @@ function Calculadora() {
 
   function copyProposal() {
     const activeModules = modules.filter((m) => m.isActive)
-    let text = `PROPOSTA DE PROJETO — ${SIZE_LABEL[result.projectSize].toUpperCase()}\n`
+    let text = `PROPOSTA DE PROJETO: ${SIZE_LABEL[result.projectSize].toUpperCase()}\n`
     text += `${"=".repeat(50)}\n\n`
     text += `Horas totais: ${result.totalHours}h\n`
     text += `  - Desenvolvimento: ${result.devHours}h\n`
@@ -391,16 +391,16 @@ function Calculadora() {
       projectDesc ||
       `Desenvolvimento de ${project.toLowerCase()} sob medida com ${result.totalHours} horas de desenvolvimento.`
 
-    const LOGO = `<svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg"><text x="0" y="28" font-family="Inter,Arial,sans-serif" font-weight="800" font-size="28" fill="#FEFEFE">SPX</text><text x="62" y="28" font-family="Arial,sans-serif" font-weight="700" font-size="28" fill="#F90108">(IA)</text></svg>`
-    const LOGO_SM = `<svg width="80" height="28" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg"><text x="0" y="28" font-family="Inter,Arial,sans-serif" font-weight="800" font-size="28" fill="#FEFEFE">SPX</text><text x="62" y="28" font-family="Arial,sans-serif" font-weight="700" font-size="28" fill="#F90108">(IA)</text></svg>`
-    const LOGO_XS = `<svg width="60" height="20" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg"><text x="0" y="28" font-family="Inter,Arial,sans-serif" font-weight="800" font-size="28" fill="#FEFEFE">SPX</text><text x="62" y="28" font-family="Arial,sans-serif" font-weight="700" font-size="28" fill="#F90108">(IA)</text></svg>`
+    const LOGO = `<img src="${window.location.origin}/brand/spxia-horizontal-branca.svg" width="120" alt="SPXia" style="height:auto;display:block;">`
+    const LOGO_SM = `<img src="${window.location.origin}/brand/spxia-horizontal-branca.svg" width="80" alt="SPXia" style="height:auto;display:block;">`
+    const LOGO_XS = `<img src="${window.location.origin}/brand/spxia-horizontal-branca.svg" width="60" alt="SPXia" style="height:auto;display:block;">`
 
     // Gerar linhas da tabela de módulos ativos
     const moduleRows = activeModules
       .map((m, i) => {
         const bg = i % 2 === 0 ? "background:#2D2D2D;" : ""
         return `<div style="display:flex;padding:9px 18px;${bg}">
-        <div style="flex:2;font-size:10px;font-weight:700;color:#F90108;">${m.name}</div>
+        <div style="flex:2;font-size:10px;font-weight:700;color:var(--accent-brand-text);">${m.name}</div>
         <div style="flex:1;font-size:10px;color:#FEFEFE;text-align:center;">${m.estimatedHours}h</div>
         <div style="flex:1;font-size:10px;color:#888888;text-align:center;">${COMPLEXITY_LABEL[m.complexity]}</div>
         <div style="flex:1;font-size:10px;color:#FEFEFE;text-align:right;">${fmt(
@@ -443,7 +443,7 @@ function Calculadora() {
       .map((r, i) => {
         const bg = i % 2 === 0 ? "background:#2D2D2D;" : ""
         return `<div style="display:flex;padding:9px 18px;${bg}">
-        <div style="flex:2;font-size:10px;font-weight:700;color:#F90108;">${r.name}</div>
+        <div style="flex:2;font-size:10px;font-weight:700;color:var(--accent-brand-text);">${r.name}</div>
         <div style="flex:3;font-size:10px;color:#888888;">${r.desc}</div>
         <div style="flex:1;font-size:10px;color:#FEFEFE;text-align:right;font-weight:600;">${fmt(
           r.value
@@ -455,12 +455,12 @@ function Calculadora() {
     // Gerar deliverables dos módulos ativos
     const deliverableItems = activeModules
       .map((m, i) => {
-        const isRed = i % 2 === 0
-        const borderColor = isRed ? "#F90108" : "#FEFEFE"
-        const borderOpacity = isRed ? "" : "opacity:0.3;"
-        const bgCard = isRed ? "background:#2D2D2D;" : ""
-        const iconBg = isRed ? "#1A1A1A" : "#2D2D2D"
-        const strokeColor = isRed ? "#F90108" : "#FEFEFE"
+        const isAccent = i % 2 === 0
+        const borderColor = isAccent ? "var(--accent-brand-text)" : "#FEFEFE"
+        const borderOpacity = isAccent ? "" : "opacity:0.3;"
+        const bgCard = isAccent ? "background:#2D2D2D;" : ""
+        const iconBg = isAccent ? "#1A1A1A" : "#2D2D2D"
+        const strokeColor = isAccent ? "var(--accent-brand-text)" : "#FEFEFE"
         return `<div style="display:flex;align-items:stretch;border-radius:6px;overflow:hidden;border:1px solid #3D3D3D;">
         <div style="width:4px;background:${borderColor};flex-shrink:0;${borderOpacity}"></div>
         <div style="flex:1;padding:10px 14px;${bgCard}display:flex;gap:10px;align-items:flex-start;">
@@ -485,19 +485,20 @@ function Calculadora() {
 <head>
 <meta charset="UTF-8">
 <title>Proposta - ${client}</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+  :root { --accent-brand-text: #57b1d8; }
   @page { size: A4; margin: 0; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Outfit', 'Inter', Arial, sans-serif; color: #FEFEFE; font-size: 11px; line-height: 1.6; }
+  body { font-family: 'Inter', system-ui, sans-serif; color: #FEFEFE; font-size: 11px; line-height: 1.6; }
   .page { width: 210mm; height: 297mm; position: relative; overflow: hidden; page-break-after: always; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .page:last-child { page-break-after: auto; }
-  h1, h2 { font-family: 'DM Serif Display', Georgia, serif; }
-  em, .red { color: #F90108; }
+  h1, h2 { font-family: 'Inter', system-ui, sans-serif; }
+  em { color: var(--accent-brand-text); }
   .header { background:#111111;padding:22px 56px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #2D2D2D; }
   .footer { position:absolute;bottom:0;left:0;right:0;padding:14px 56px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #2D2D2D; }
   .footer span { font-size:8px;color:#888888;letter-spacing:2px;text-transform:uppercase; }
-  .section-num { width:36px;height:36px;background:#2D2D2D;border-left:3px solid #F90108;border-radius:0 8px 8px 0;display:flex;align-items:center;justify-content:center; }
+  .section-num { width:36px;height:36px;background:#2D2D2D;border-left:3px solid var(--accent-brand-text);border-radius:0 8px 8px 0;display:flex;align-items:center;justify-content:center; }
   .section-num span { font-size:13px;font-weight:800;color:#FEFEFE;font-family:Inter; }
 </style>
 </head>
@@ -505,9 +506,9 @@ function Calculadora() {
 
 <!-- ===== PAGE 1 - CAPA ===== -->
 <div class="page" style="background:#1A1A1A;">
-  <div style="position:absolute;top:0;left:0;width:100%;height:4px;background:#F90108;"></div>
-  <div style="position:absolute;top:-120px;right:-80px;width:320px;height:320px;border-radius:50%;border:1px solid rgba(249,1,8,0.06);"></div>
-  <div style="position:absolute;bottom:-150px;left:-100px;width:400px;height:400px;border-radius:50%;border:1px solid rgba(249,1,8,0.04);"></div>
+  <div style="position:absolute;top:0;left:0;width:100%;height:4px;background:var(--accent-brand-text);"></div>
+  <div style="position:absolute;top:-120px;right:-80px;width:320px;height:320px;border-radius:50%;border:1px solid rgba(87,177,216,0.06);"></div>
+  <div style="position:absolute;bottom:-150px;left:-100px;width:400px;height:400px;border-radius:50%;border:1px solid rgba(87,177,216,0.04);"></div>
 
   <div style="padding:40px 56px 0;display:flex;justify-content:space-between;align-items:center;">
     ${LOGO}
@@ -518,24 +519,24 @@ function Calculadora() {
   </div>
 
   <div style="padding:80px 56px 0;">
-    <div style="font-size:9px;font-weight:700;color:#F90108;letter-spacing:4px;text-transform:uppercase;margin-bottom:16px;">Proposta de Projeto</div>
+    <div style="font-size:9px;font-weight:700;color:var(--accent-brand-text);letter-spacing:4px;text-transform:uppercase;margin-bottom:16px;">Proposta de Projeto</div>
     <h1 style="font-size:46px;font-weight:400;color:#FEFEFE;line-height:1.05;margin-bottom:4px;">${project
       .split(" ")
       .slice(0, Math.ceil(project.split(" ").length / 2))
       .join(" ")}</h1>
-    <h1 style="font-size:46px;font-weight:400;line-height:1.05;"><em style="font-style:italic;color:#F90108;">${
+    <h1 style="font-size:46px;font-weight:400;line-height:1.05;"><em style="font-style:normal;color:var(--accent-brand-text);">${
       project
         .split(" ")
         .slice(Math.ceil(project.split(" ").length / 2))
         .join(" ") || "Software"
     }</em></h1>
-    <div style="width:60px;height:3px;background:#F90108;margin:32px 0;border-radius:2px;"></div>
-    <div style="font-size:14px;color:#888888;line-height:1.7;max-width:420px;font-family:'Outfit',sans-serif;">${desc}</div>
+    <div style="width:60px;height:3px;background:var(--accent-brand-text);margin:32px 0;border-radius:2px;"></div>
+    <div style="font-size:14px;color:#888888;line-height:1.7;max-width:420px;font-family:'Inter',system-ui,sans-serif;">${desc}</div>
   </div>
 
   <div style="position:absolute;top:200px;right:56px;text-align:right;">
     <div style="background:#2D2D2D;border:1px solid #3D3D3D;border-radius:10px;padding:20px 24px;display:inline-block;">
-      <div style="font-size:8px;font-weight:700;color:#F90108;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Cliente</div>
+      <div style="font-size:8px;font-weight:700;color:var(--accent-brand-text);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Cliente</div>
       <div style="font-size:18px;font-weight:700;color:#FEFEFE;line-height:1.2;">${client}</div>
       <div style="margin-top:10px;font-size:10px;color:#888888;">${SIZE_LABEL[result.projectSize]} · ${
         result.totalHours
@@ -555,7 +556,7 @@ function Calculadora() {
       </div>
       <div>
         <div style="font-size:8px;font-weight:700;color:#888888;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Validade</div>
-        <div style="font-size:14px;font-weight:700;color:#F90108;">15 dias</div>
+        <div style="font-size:14px;font-weight:700;color:var(--accent-brand-text);">15 dias</div>
       </div>
     </div>
     <div style="height:1px;background:#3D3D3D;margin-bottom:16px;"></div>
@@ -579,11 +580,11 @@ ${
   <div style="padding:32px 56px;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
       <div class="section-num"><span>01</span></div>
-      <h2 style="font-size:22px;color:#FEFEFE;">Escopo do <em style="font-style:italic;">Projeto</em></h2>
+      <h2 style="font-size:22px;color:#FEFEFE;">Escopo do <em style="font-style:normal;">Projeto</em></h2>
     </div>
 
-    <p style="font-size:12px;color:#888888;line-height:1.7;margin-bottom:20px;font-family:'Outfit',sans-serif;">
-      A <strong style="color:#FEFEFE;">SPXIA</strong> irá desenvolver o projeto <strong style="color:#FEFEFE;">${project}</strong> para
+    <p style="font-size:12px;color:#888888;line-height:1.7;margin-bottom:20px;font-family:'Inter',system-ui,sans-serif;">
+      A <strong style="color:#FEFEFE;">SPXia</strong> irá desenvolver o projeto <strong style="color:#FEFEFE;">${project}</strong> para
       <strong style="color:#FEFEFE;">${client}</strong>, com complexidade técnica <em>${COMPLEXITY_LABEL[
         complexity
       ].toLowerCase()}</em>,
@@ -592,9 +593,9 @@ ${
       } horas</strong> de desenvolvimento distribuídas entre backend, frontend, QA, módulos e integrações.
     </p>
 
-    <div style="background:#2D2D2D;border-radius:8px;padding:16px 20px;border-left:3px solid #F90108;margin-bottom:20px;">
-      <div style="font-size:9px;font-weight:700;color:#F90108;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Visão Geral</div>
-      <div style="font-size:11px;color:#FEFEFE;line-height:1.7;font-family:'Outfit',sans-serif;">
+    <div style="background:#2D2D2D;border-radius:8px;padding:16px 20px;border-left:3px solid var(--accent-brand-text);margin-bottom:20px;">
+      <div style="font-size:9px;font-weight:700;color:var(--accent-brand-text);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Visão Geral</div>
+      <div style="font-size:11px;color:#FEFEFE;line-height:1.7;font-family:'Inter',system-ui,sans-serif;">
         Backend: <strong>${backendHours}h</strong> · Frontend: <strong>${frontendHours}h</strong> · QA: <strong>${qaHours}h</strong>
         ${intCount > 0 ? ` · Integrações: <strong>${intCount}</strong> (${result.integrationHours}h)` : ""}
         · Complexidade: <em>${COMPLEXITY_LABEL[complexity]}</em> (×${COMPLEXITY_MULT[complexity]})
@@ -608,7 +609,7 @@ ${
   </div>
 
   <div class="footer">
-    <span>SPXIA · Proposta Comercial</span>
+    <span>SPXia · Proposta Comercial</span>
     <span style="font-size:8px;color:#888888;">02 / ${String(totalPages).padStart(2, "0")}</span>
   </div>
 </div>
@@ -626,15 +627,15 @@ ${
   <div style="padding:28px 56px;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
       <div class="section-num"><span>${activeModules.length > 0 ? "02" : "01"}</span></div>
-      <h2 style="font-size:22px;color:#FEFEFE;"><em style="font-style:italic;">Investimento</em></h2>
+      <h2 style="font-size:22px;color:#FEFEFE;"><em style="font-style:normal;">Investimento</em></h2>
     </div>
 
     <!-- Price box -->
     <div style="background:#2D2D2D;border-radius:10px;padding:24px 28px;margin-bottom:18px;position:relative;overflow:hidden;border:1px solid #3D3D3D;">
-      <div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;border-radius:50%;background:rgba(249,1,8,0.05);"></div>
+      <div style="position:absolute;top:-20px;right:-20px;width:120px;height:120px;border-radius:50%;background:rgba(87,177,216,0.05);"></div>
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div>
-          <div style="font-size:9px;font-weight:700;color:#F90108;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;">Valor do Projeto</div>
+          <div style="font-size:9px;font-weight:700;color:var(--accent-brand-text);letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;">Valor do Projeto</div>
           <div style="font-size:42px;font-weight:900;color:#FEFEFE;line-height:1;font-family:Inter;">${fmt(
             result.finalPrice
           )
@@ -643,8 +644,8 @@ ${
           <div style="font-size:11px;color:#888888;margin-top:6px;">Pagamento em até 3x sem juros</div>
         </div>
         <div style="text-align:center;">
-          <div style="background:rgba(249,1,8,0.1);border:1px solid rgba(249,1,8,0.2);border-radius:8px;padding:14px 20px;">
-            <div style="font-size:9px;font-weight:700;color:#F90108;letter-spacing:2px;margin-bottom:4px;">PRAZO</div>
+          <div style="background:rgba(87,177,216,0.1);border:1px solid rgba(87,177,216,0.2);border-radius:8px;padding:14px 20px;">
+            <div style="font-size:9px;font-weight:700;color:var(--accent-brand-text);letter-spacing:2px;margin-bottom:4px;">PRAZO</div>
             <div style="font-size:28px;font-weight:900;color:#FEFEFE;font-family:Inter;">${deadline}</div>
             <div style="font-size:10px;color:#888888;">dias úteis</div>
           </div>
@@ -667,11 +668,11 @@ ${
           result.totalCost
         )}</div>
       </div>
-      <div style="display:flex;padding:10px 18px;background:rgba(249,1,8,0.08);border-top:1px solid rgba(249,1,8,0.2);">
-        <div style="flex:5;font-size:11px;font-weight:800;color:#F90108;">PREÇO FINAL (margem ${pct(
+      <div style="display:flex;padding:10px 18px;background:rgba(87,177,216,0.08);border-top:1px solid rgba(87,177,216,0.2);">
+        <div style="flex:5;font-size:11px;font-weight:800;color:var(--accent-brand-text);">PREÇO FINAL (margem ${pct(
           result.realMargin
         )})</div>
-        <div style="flex:1;font-size:12px;font-weight:900;color:#F90108;text-align:right;">${fmt(
+        <div style="flex:1;font-size:12px;font-weight:900;color:var(--accent-brand-text);text-align:right;">${fmt(
           result.finalPrice
         )}</div>
       </div>
@@ -680,16 +681,16 @@ ${
     <!-- Conditions -->
     <div style="display:flex;gap:12px;margin-bottom:14px;">
       <div style="flex:1;background:#2D2D2D;border-radius:8px;padding:14px 18px;border:1px solid #3D3D3D;">
-        <div style="font-size:9px;font-weight:700;color:#F90108;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Forma de Pagamento</div>
-        <div style="font-size:10px;color:#FEFEFE;line-height:1.7;font-family:'Outfit',sans-serif;">
+        <div style="font-size:9px;font-weight:700;color:var(--accent-brand-text);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Forma de Pagamento</div>
+        <div style="font-size:10px;color:#FEFEFE;line-height:1.7;font-family:'Inter',system-ui,sans-serif;">
           50% na aprovação (${fmt(result.finalPrice / 2)})<br>
           50% na entrega final (${fmt(result.finalPrice / 2)})<br>
           Via PIX, transferência ou boleto.
         </div>
       </div>
       <div style="flex:1;background:#2D2D2D;border-radius:8px;padding:14px 18px;border:1px solid #3D3D3D;">
-        <div style="font-size:9px;font-weight:700;color:#F90108;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Especificação Técnica</div>
-        <div style="font-size:10px;color:#FEFEFE;line-height:1.7;font-family:'Outfit',sans-serif;">
+        <div style="font-size:9px;font-weight:700;color:var(--accent-brand-text);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Especificação Técnica</div>
+        <div style="font-size:10px;color:#FEFEFE;line-height:1.7;font-family:'Inter',system-ui,sans-serif;">
           Horas totais: ${result.totalHours}h<br>
           Complexidade: ${COMPLEXITY_LABEL[complexity]} (×${COMPLEXITY_MULT[complexity]})<br>
           Classificação: Projeto ${SIZE_LABEL[result.projectSize]}
@@ -698,9 +699,9 @@ ${
     </div>
 
     <!-- Observations -->
-    <div style="background:#2D2D2D;border-radius:8px;padding:12px 18px;border-left:3px solid #F90108;margin-bottom:14px;">
-      <div style="font-size:9px;font-weight:700;color:#F90108;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Observações</div>
-      <div style="font-size:10px;color:#888888;line-height:1.7;font-family:'Outfit',sans-serif;">
+    <div style="background:#2D2D2D;border-radius:8px;padding:12px 18px;border-left:3px solid var(--accent-brand-text);margin-bottom:14px;">
+      <div style="font-size:9px;font-weight:700;color:var(--accent-brand-text);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Observações</div>
+      <div style="font-size:10px;color:#888888;line-height:1.7;font-family:'Inter',system-ui,sans-serif;">
         • Hospedagem e domínio não inclusos (valor a combinar).<br>
         • Alterações fora do escopo aprovado serão orçadas separadamente.<br>
         • Suporte técnico de 30 dias após entrega incluso.<br>
@@ -726,7 +727,7 @@ ${
   <!-- Footer -->
   <div style="position:absolute;bottom:0;left:0;right:0;">
     <div class="footer">
-      <span>SPXIA · Proposta Comercial</span>
+      <span>SPXia · Proposta Comercial</span>
       <span style="font-size:8px;color:#888888;">${String(totalPages).padStart(2, "0")} / ${String(
         totalPages
       ).padStart(2, "0")}</span>
@@ -734,7 +735,7 @@ ${
     <div style="background:#111111;padding:14px 56px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #2D2D2D;">
       <div style="display:flex;align-items:center;gap:10px;">
         ${LOGO_XS}
-        <div style="font-size:9px;color:#888888;font-style:italic;font-family:'DM Serif Display',serif;">"Pare de apostar. Comece a <em>engenheirar</em>."</div>
+        <div style="font-size:9px;color:#888888;font-style:normal;font-family:'Inter',system-ui,sans-serif;">"Pare de apostar. Comece a <em>engenheirar</em>."</div>
       </div>
       <div style="text-align:right;">
         <div style="font-size:8px;color:#888888;">SPX Inteligência · Mato Grosso, Brasil</div>
@@ -757,7 +758,7 @@ ${
   // ── Gauge da margem ──
   const gaugeColor =
     result.realMargin < 0.5
-      ? "#F90108"
+      ? "var(--danger)"
       : result.realMargin <= 0.6
         ? "#fbbf24"
         : result.realMargin <= 0.7
@@ -1113,7 +1114,7 @@ ${
                   rows={3}
                   value={projectDesc}
                   onChange={(e) => setProjectDesc(e.target.value)}
-                  placeholder="Descrição que aparecerá na capa da proposta (opcional — gerado automaticamente se vazio)"
+                  placeholder="Descrição que aparecerá na capa da proposta (opcional; gerado automaticamente se vazio)"
                 />
               </div>
               <div className="form-group">
@@ -1172,7 +1173,7 @@ ${
                     </button>
                     <button
                       className="btn btn-sm"
-                      style={{ color: "#F90108", border: "1px solid #F90108" }}
+                      style={{ color: "var(--danger)", border: "1px solid var(--danger)" }}
                       onClick={() => deleteTemplate(t.id)}
                     >
                       Excluir
@@ -1266,7 +1267,7 @@ ${
               {pct(result.realMargin)}
             </div>
             <div className="calc-gauge-legend">
-              <span style={{ color: "#F90108" }}>&lt;50%</span>
+              <span style={{ color: "var(--danger)" }}>&lt;50%</span>
               <span style={{ color: "#fbbf24" }}>50-60%</span>
               <span style={{ color: "#4ade80" }}>60-70%</span>
               <span style={{ color: "#60a5fa" }}>&gt;70%</span>
@@ -1294,7 +1295,7 @@ ${
               <span>
                 {fmt(SIZE_RANGE[result.projectSize][0])}
                 {SIZE_RANGE[result.projectSize][1] < Infinity
-                  ? ` – ${fmt(SIZE_RANGE[result.projectSize][1])}`
+                  ? ` a ${fmt(SIZE_RANGE[result.projectSize][1])}`
                   : "+"}
               </span>
             </div>

@@ -17,9 +17,8 @@ interface ScrollProgressProps
 }
 
 /**
- * Barra fina de progresso de leitura fixa no topo da página.
- * Base: MagicUI `scroll-progress`, com a paleta SPXIA (#F90108) e
- * suavização por spring — desativada em `prefers-reduced-motion`.
+ * Barra fina de progresso de leitura fixa no topo da página, em Azul Pulso.
+ * Suavização por spring, desativada em `prefers-reduced-motion`.
  */
 export function ScrollProgress({ className, ref, ...props }: ScrollProgressProps) {
   const { scrollYProgress } = useScroll()
@@ -35,9 +34,7 @@ export function ScrollProgress({ className, ref, ...props }: ScrollProgressProps
       ref={ref}
       aria-hidden="true"
       className={cn(
-        "pointer-events-none fixed inset-x-0 top-0 z-50 h-[2px] origin-left",
-        "bg-gradient-to-r from-[#7A1B1E] via-[#F90108] to-[#FF7377]",
-        "shadow-[0_0_12px_rgba(249,1,8,0.55)]",
+        "pointer-events-none fixed inset-x-0 top-0 z-50 h-[3px] origin-left bg-primary",
         className,
       )}
       style={{ scaleX: shouldReduceMotion ? scrollYProgress : smoothProgress }}

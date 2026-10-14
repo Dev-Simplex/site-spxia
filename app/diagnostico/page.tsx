@@ -1,8 +1,12 @@
 'use client'
 
+import { reveal } from "@/components/ui/motion-kit"
 import { useRef, useState } from 'react'
 import Link from 'next/link'
-import { AnimatePresence, motion } from 'motion/react'
+import Image from 'next/image'
+import { useI18n } from '@/lib/i18n/context'
+import { LanguageSwitcher } from '@/components/language-switcher'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import {
   AlertCircle,
   ArrowLeft,
@@ -21,7 +25,7 @@ import { cn } from '@/lib/utils'
 const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
 if (!RECAPTCHA_SITE_KEY) {
   console.warn(
-    'NEXT_PUBLIC_RECAPTCHA_SITE_KEY não configurada — o formulário do Diagnóstico não carregará o reCAPTCHA',
+    'NEXT_PUBLIC_RECAPTCHA_SITE_KEY não configurada; o formulário do Diagnóstico não carregará o reCAPTCHA',
   )
 }
 
@@ -31,50 +35,348 @@ interface Question {
   placeholder: string
 }
 
-const questions: Question[] = [
-  { id: 'q1', label: 'Qual é o principal objetivo da empresa ao investir em IA?', placeholder: 'Ex.: aumentar vendas, reduzir custos, ganhar produtividade, melhorar atendimento, automatizar processos.' },
-  { id: 'q2', label: 'Quais resultados hoje estão abaixo do esperado e precisam melhorar com urgência?', placeholder: 'Descreva as dores mais críticas do negócio.' },
-  { id: 'q3', label: 'Quais processos da empresa são mais repetitivos, manuais e demorados?', placeholder: 'Esses são os primeiros candidatos para automação com IA.' },
-  { id: 'q4', label: 'Quais áreas da empresa mais sofrem com gargalos?', placeholder: 'Ex.: Comercial, atendimento, financeiro, jurídico, RH, operações, marketing.' },
-  { id: 'q5', label: 'Quais tarefas dependem muito de pessoas para analisar, responder, classificar ou decidir?', placeholder: 'Esses pontos costumam ter alto potencial para IA.' },
-  { id: 'q6', label: 'Hoje a empresa perde dinheiro onde?', placeholder: 'Ex.: retrabalho, demora no atendimento, erros humanos, baixa conversão, falta de follow-up.' },
-  { id: 'q7', label: 'Quais indicadores a empresa quer melhorar com IA?', placeholder: 'Ex.: faturamento, margem, NPS, tempo de resposta, taxa de conversão, produtividade.' },
-  { id: 'q8', label: 'A empresa possui dados organizados para apoiar decisões?', placeholder: 'Sem dados minimamente estruturados, projetos de IA ficam limitados.' },
-  { id: 'q9', label: 'Onde esses dados estão hoje?', placeholder: 'Ex.: ERP, CRM, planilhas, WhatsApp, e-mail, sistema financeiro, banco de dados.' },
-  { id: 'q10', label: 'A qualidade dos dados atuais é confiável?', placeholder: 'Dados duplicados, incompletos ou desatualizados comprometem o resultado.' },
-  { id: 'q11', label: 'A empresa já possui sistemas integráveis?', placeholder: 'Ex.: APIs, ERP, CRM, automações, banco de dados, plataformas de atendimento.' },
-  { id: 'q12', label: 'Quais decisões hoje são tomadas mais por feeling do que por informação?', placeholder: 'A IA pode apoiar com previsões, análises e recomendações.' },
-  { id: 'q13', label: 'Existe volume suficiente de demanda para justificar automação com IA?', placeholder: 'Ex.: grande número de leads, atendimentos, documentos, chamados, contratos.' },
-  { id: 'q14', label: 'Quais atividades precisam acontecer com mais velocidade?', placeholder: 'Ex.: atendimento, orçamento, proposta, triagem, cobrança, suporte.' },
-  { id: 'q15', label: 'Quais áreas precisam de maior padronização?', placeholder: 'IA funciona muito bem para manter padrão em comunicação, análise e execução.' },
-  { id: 'q16', label: 'A equipe está preparada para usar IA no dia a dia?', placeholder: 'Maturidade digital, resistência cultural e necessidade de treinamento.' },
-  { id: 'q17', label: 'Quem serão os responsáveis internos pelo projeto de IA?', placeholder: 'Sem dono do projeto, a implantação tende a perder força.' },
-  { id: 'q18', label: 'Quais riscos a empresa precisa controlar ao usar IA?', placeholder: 'Ex.: segurança da informação, privacidade, erros, LGPD, impacto operacional.' },
-  { id: 'q19', label: 'Qual orçamento e expectativa de retorno para a implantação?', placeholder: 'Define prioridade, escopo e velocidade do projeto.' },
-  { id: 'q20', label: 'Se a IA desse certo em 90 dias, o que teria mudado na prática?', placeholder: 'Transforme intenção em meta objetiva e mensurável.' },
-]
+const questionCopy: Record<"pt" | "en", Question[]> = {
+  "pt": [
+    {
+      "id": "q1",
+      "label": "O que a empresa mais quer melhorar com IA?",
+      "placeholder": "Ex.: vender mais, gastar menos, atender melhor, ganhar tempo."
+    },
+    {
+      "id": "q2",
+      "label": "O que hoje está abaixo do esperado e precisa melhorar logo?",
+      "placeholder": "Conte o que mais preocupa no momento."
+    },
+    {
+      "id": "q3",
+      "label": "Quais tarefas se repetem mais e tomam mais tempo?",
+      "placeholder": "Costumam ser as primeiras a ficar mais simples."
+    },
+    {
+      "id": "q4",
+      "label": "Em quais áreas o trabalho mais trava?",
+      "placeholder": "Ex.: comercial, atendimento, financeiro, jurídico, RH, operações, marketing."
+    },
+    {
+      "id": "q5",
+      "label": "Quais tarefas dependem de alguém para analisar, responder, classificar ou decidir?",
+      "placeholder": "Nesses pontos, a IA costuma ajudar bastante."
+    },
+    {
+      "id": "q6",
+      "label": "Onde a empresa perde dinheiro hoje?",
+      "placeholder": "Ex.: retrabalho, demora para responder, erros, poucas vendas fechadas, cliente sem retorno."
+    },
+    {
+      "id": "q7",
+      "label": "Quais números a empresa quer ver melhorar?",
+      "placeholder": "Ex.: faturamento, margem, satisfação dos clientes, tempo de resposta, vendas fechadas."
+    },
+    {
+      "id": "q8",
+      "label": "As informações da empresa estão organizadas?",
+      "placeholder": "A IA trabalha melhor quando os dados têm alguma ordem."
+    },
+    {
+      "id": "q9",
+      "label": "Onde essas informações ficam hoje?",
+      "placeholder": "Ex.: CRM, ERP, planilhas, WhatsApp, e-mail, sistema financeiro."
+    },
+    {
+      "id": "q10",
+      "label": "Dá para confiar nessas informações?",
+      "placeholder": "Dados repetidos, incompletos ou desatualizados atrapalham o resultado."
+    },
+    {
+      "id": "q11",
+      "label": "Quais sistemas a empresa já usa?",
+      "placeholder": "Ex.: CRM, ERP, plataforma de atendimento, automações, banco de dados."
+    },
+    {
+      "id": "q12",
+      "label": "Quais decisões hoje são tomadas mais no instinto do que com informação?",
+      "placeholder": "A IA pode ajudar com análises, previsões e sugestões."
+    },
+    {
+      "id": "q13",
+      "label": "Quanto volume a empresa recebe por mês?",
+      "placeholder": "Ex.: número de contatos, atendimentos, documentos, chamados ou contratos."
+    },
+    {
+      "id": "q14",
+      "label": "O que precisa acontecer mais rápido?",
+      "placeholder": "Ex.: atendimento, orçamento, proposta, triagem, cobrança, suporte."
+    },
+    {
+      "id": "q15",
+      "label": "Onde falta padrão no jeito de fazer as coisas?",
+      "placeholder": "A IA ajuda a manter o mesmo padrão na comunicação, na análise e na execução."
+    },
+    {
+      "id": "q16",
+      "label": "Como a equipe se sente em relação a usar IA no dia a dia?",
+      "placeholder": "Familiaridade com tecnologia, resistência e necessidade de treinamento."
+    },
+    {
+      "id": "q17",
+      "label": "Quem vai cuidar do projeto dentro da empresa?",
+      "placeholder": "Sem um responsável, a implantação perde força."
+    },
+    {
+      "id": "q18",
+      "label": "Que cuidados a empresa precisa ter ao usar IA?",
+      "placeholder": "Ex.: segurança da informação, privacidade, LGPD, erros, impacto na operação."
+    },
+    {
+      "id": "q19",
+      "label": "Quanto a empresa pretende investir e que retorno espera?",
+      "placeholder": "Isso ajuda a definir prioridade, tamanho e ritmo do projeto."
+    },
+    {
+      "id": "q20",
+      "label": "Se a IA desse certo em 90 dias, o que teria mudado na prática?",
+      "placeholder": "Descreva uma meta clara, que dê para medir."
+    }
+  ],
+  "en": [
+    {
+      "id": "q1",
+      "label": "What does your company most want to improve with AI?",
+      "placeholder": "e.g. sell more, spend less, serve customers better, save time."
+    },
+    {
+      "id": "q2",
+      "label": "What is below expectations today and needs to improve soon?",
+      "placeholder": "Tell us what worries you most right now."
+    },
+    {
+      "id": "q3",
+      "label": "Which tasks repeat the most and take the most time?",
+      "placeholder": "These are usually the first to get simpler."
+    },
+    {
+      "id": "q4",
+      "label": "Where does work get stuck the most?",
+      "placeholder": "e.g. sales, customer service, finance, legal, HR, operations, marketing."
+    },
+    {
+      "id": "q5",
+      "label": "Which tasks need someone to review, answer, sort or decide?",
+      "placeholder": "AI tends to help a lot here."
+    },
+    {
+      "id": "q6",
+      "label": "Where is your company losing money today?",
+      "placeholder": "e.g. rework, slow replies, mistakes, few closed deals, customers left without follow-up."
+    },
+    {
+      "id": "q7",
+      "label": "Which numbers do you want to see improve?",
+      "placeholder": "e.g. revenue, margin, customer satisfaction, response time, closed deals."
+    },
+    {
+      "id": "q8",
+      "label": "Is your company's information organized?",
+      "placeholder": "AI works better when the data has some order."
+    },
+    {
+      "id": "q9",
+      "label": "Where is that information kept today?",
+      "placeholder": "e.g. CRM, ERP, spreadsheets, WhatsApp, email, finance system."
+    },
+    {
+      "id": "q10",
+      "label": "Can you trust that information?",
+      "placeholder": "Duplicate, incomplete or outdated data gets in the way."
+    },
+    {
+      "id": "q11",
+      "label": "Which systems does your company already use?",
+      "placeholder": "e.g. CRM, ERP, customer service platform, automations, database."
+    },
+    {
+      "id": "q12",
+      "label": "Which decisions are made more on gut feeling than on information?",
+      "placeholder": "AI can help with analysis, forecasts and suggestions."
+    },
+    {
+      "id": "q13",
+      "label": "How much volume does your company handle per month?",
+      "placeholder": "e.g. number of leads, conversations, documents, tickets or contracts."
+    },
+    {
+      "id": "q14",
+      "label": "What needs to happen faster?",
+      "placeholder": "e.g. customer service, quotes, proposals, screening, billing, support."
+    },
+    {
+      "id": "q15",
+      "label": "Where is there no standard way of doing things?",
+      "placeholder": "AI helps keep the same standard in communication, analysis and execution."
+    },
+    {
+      "id": "q16",
+      "label": "How does your team feel about using AI day to day?",
+      "placeholder": "Comfort with technology, resistance and training needs."
+    },
+    {
+      "id": "q17",
+      "label": "Who will own the project inside your company?",
+      "placeholder": "Without an owner, the rollout tends to lose steam."
+    },
+    {
+      "id": "q18",
+      "label": "What does your company need to be careful about when using AI?",
+      "placeholder": "e.g. information security, privacy, data protection law (LGPD), errors, impact on operations."
+    },
+    {
+      "id": "q19",
+      "label": "How much do you plan to invest, and what return do you expect?",
+      "placeholder": "This helps set the priority, size and pace of the project."
+    },
+    {
+      "id": "q20",
+      "label": "If AI worked out in 90 days, what would have changed in practice?",
+      "placeholder": "Describe a clear goal you could measure."
+    }
+  ]
+}
 
 const QUESTIONS_PER_PAGE = 5
-const totalPages = Math.ceil(questions.length / QUESTIONS_PER_PAGE)
+const totalPages = Math.ceil(questionCopy.pt.length / QUESTIONS_PER_PAGE)
 // contato + páginas de perguntas + confirmação/captcha
 const totalSteps = totalPages + 2
 
 type Step = 'contact' | 'questions' | 'captcha' | 'sending' | 'success' | 'error'
 
 const fieldClass =
-  'w-full rounded-lg border border-border bg-background/60 px-4 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary focus:ring-2 focus:ring-primary/40'
+  'w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/40'
 
 const labelClass =
-  'mb-2 block font-mono text-[0.6875rem] uppercase tracking-[0.08em] text-muted-foreground'
+  'mb-2 block text-sm font-medium text-foreground'
 
-const stepMotion = {
-  initial: { opacity: 0, y: 18 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -14 },
-  transition: { duration: 0.32, ease: [0.22, 1, 0.36, 1] as const },
+const copy = {
+  "pt": {
+    "home": "Voltar ao site",
+    "homeAria": "Voltar para a página inicial da SPXia",
+    "step": "Etapa",
+    "of": "de",
+    "progress": "Progresso do diagnóstico",
+    "start": "Para",
+    "startEm": "começar",
+    "intro": "Conte um pouco sobre você e sua empresa.",
+    "name": "Seu nome",
+    "fullName": "Nome completo",
+    "email": "E-mail",
+    "emailPlaceholder": "seu@email.com",
+    "company": "Nome da empresa",
+    "companyPlaceholder": "Empresa LTDA",
+    "cnpj": "CNPJ",
+    "industry": "Ramo de atuação",
+    "industryPlaceholder": "Ex.: imobiliária, incorporadora, varejo, saúde",
+    "business": "Conte sobre o seu negócio",
+    "businessPlaceholder": "O que sua empresa faz? Quantas pessoas trabalham nela? O que mais toma tempo hoje?",
+    "cancel": "Cancelar",
+    "next": "Próximo",
+    "back": "Voltar",
+    "review": "Revisar e enviar",
+    "routine": "Como é a",
+    "routineEm": "sua rotina",
+    "required": "Responda todas as perguntas com detalhes para ajudar na análise.",
+    "fieldRequired": "Responda esta pergunta para continuar",
+    "missing": "Ainda faltam respostas nesta página.",
+    "confirm": "Tudo",
+    "confirmEm": "certo?",
+    "confirmDesc": "Confira seus dados e faça a verificação para enviar.",
+    "details": "Seus dados",
+    "answers": "Suas respostas",
+    "reviewName": "Nome",
+    "reviewCompany": "Empresa",
+    "reviewIndustry": "Ramo",
+    "answered": "perguntas respondidas",
+    "verify": "Faça a verificação para enviar.",
+    "unavailable": "A verificação está indisponível; tente novamente mais tarde.",
+    "send": "Enviar diagnóstico",
+    "sending": "Enviando…",
+    "saving": "Estamos salvando suas respostas.",
+    "received": "Recebemos",
+    "receivedEm": "suas respostas.",
+    "success": "Vamos analisar suas respostas e entrar em contato por e-mail e WhatsApp.",
+    "collected": "Respostas recebidas",
+    "analysis": "Análise com IA",
+    "contact": "Conversa com a equipe",
+    "error": "Não conseguimos enviar",
+    "errorDesc": "Tente novamente em instantes; suas respostas continuam aqui.",
+    "retry": "Tentar novamente",
+    "privacy": "SPXia · Seus dados são usados apenas para este diagnóstico."
+  },
+  "en": {
+    "home": "Back to the site",
+    "homeAria": "Back to the SPXia home page",
+    "step": "Step",
+    "of": "of",
+    "progress": "Diagnosis progress",
+    "start": "Let’s",
+    "startEm": "get started",
+    "intro": "Tell us a little about you and your company.",
+    "name": "Your name",
+    "fullName": "Full name",
+    "email": "Email",
+    "emailPlaceholder": "you@email.com",
+    "company": "Company name",
+    "companyPlaceholder": "Company Ltd.",
+    "cnpj": "CNPJ (Brazilian company ID)",
+    "industry": "Industry",
+    "industryPlaceholder": "e.g. real estate agency, developer, retail, healthcare",
+    "business": "Tell us about your business",
+    "businessPlaceholder": "What does your company do? How many people work there? What takes up the most time today?",
+    "cancel": "Cancel",
+    "next": "Next",
+    "back": "Back",
+    "review": "Review and send",
+    "routine": "Your",
+    "routineEm": "day-to-day",
+    "required": "Answer every question in detail to help with the analysis.",
+    "fieldRequired": "Answer this question to continue",
+    "missing": "Some questions on this page are still unanswered.",
+    "confirm": "All",
+    "confirmEm": "set?",
+    "confirmDesc": "Check your details and complete the verification to send.",
+    "details": "Your details",
+    "answers": "Your answers",
+    "reviewName": "Name",
+    "reviewCompany": "Company",
+    "reviewIndustry": "Industry",
+    "answered": "questions answered",
+    "verify": "Complete the verification to send.",
+    "unavailable": "Verification is unavailable; please try again later.",
+    "send": "Send diagnosis",
+    "sending": "Sending…",
+    "saving": "We’re saving your answers.",
+    "received": "We got",
+    "receivedEm": "your answers.",
+    "success": "We’ll review your answers and contact you by email and WhatsApp.",
+    "collected": "Answers received",
+    "analysis": "AI analysis",
+    "contact": "Talk with our team",
+    "error": "We couldn’t send it",
+    "errorDesc": "Please try again in a moment; your answers are still here.",
+    "retry": "Try again",
+    "privacy": "SPXia · Your data is used only for this diagnosis."
+  }
 }
 
 export default function DiagnosticoPage() {
+  const { locale } = useI18n()
+  const c = copy[locale]
+  const questions = questionCopy[locale]
+  const reduceMotion = useReducedMotion()
+  const stepMotion = {
+    initial: reduceMotion ? false as const : { opacity: 0, y: 16 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: reduceMotion ? 0 : -16 },
+    transition: { duration: reduceMotion ? 0 : 0.35 },
+  }
   const [step, setStep] = useState<Step>('contact')
   const [qPage, setQPage] = useState(0)
   const [errorMsg, setErrorMsg] = useState('')
@@ -122,11 +424,11 @@ export default function DiagnosticoPage() {
 
     if (qPage < totalPages - 1) {
       setQPage(qPage + 1)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
     } else {
-      // Última página — vai para a etapa de revisão + captcha
+      // Última página; vai para a etapa de revisão + captcha
       setStep('captcha')
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
     }
   }
 
@@ -134,12 +436,12 @@ export default function DiagnosticoPage() {
     setValidationErrors([])
     if (qPage > 0) setQPage(qPage - 1)
     else setStep('contact')
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
   }
 
   async function submitAll() {
     if (RECAPTCHA_SITE_KEY && !captchaToken) {
-      setErrorMsg('Complete o reCAPTCHA para enviar.')
+      setErrorMsg(c.verify)
       return
     }
 
@@ -163,7 +465,7 @@ export default function DiagnosticoPage() {
     } else {
       setStep('success')
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
   }
 
   const currentQuestions = questions.slice(
@@ -178,86 +480,84 @@ export default function DiagnosticoPage() {
 
   return (
     <div className="relative isolate min-h-screen bg-background">
-      {/* Brilho vermelho sutil no topo */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(60%_100%_at_50%_0%,rgba(249,1,8,0.14),transparent_70%)]"
-      />
-
-      <div className="relative mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
+      <div className="relative mx-auto w-full max-w-6xl px-5 py-8 sm:px-6 sm:py-12">
         {/* Topo: logo + voltar + progresso */}
         <header className="mb-8">
           <div className="flex items-center justify-between gap-4">
-            <Link href="/" aria-label="Voltar para a home da SPXIA">
-              <Logo width={104} height={34} />
+            <Link href="/" aria-label={c.homeAria}>
+              <Logo height={30} />
             </Link>
+            <div className="flex items-center gap-3"><LanguageSwitcher />
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 py-2 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-muted-foreground transition-colors hover:text-foreground"
+              className="inline-flex items-center gap-1.5 py-2 text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft aria-hidden="true" className="h-3.5 w-3.5" />
-              Voltar ao site
-            </Link>
+              {c.home}
+            </Link></div>
           </div>
 
           {showProgress && (
             <div className="mt-6">
-              <div className="mb-2 flex items-center justify-between font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-muted-foreground">
+              <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
                 <span>
-                  Etapa {currentStep} de {totalSteps}
+                  {c.step} {currentStep} {c.of} {totalSteps}
                 </span>
-                <span className="text-primary-text">{progress}%</span>
+                <span className="text-primary">{progress}%</span>
               </div>
               <div
                 role="progressbar"
                 aria-valuenow={progress}
                 aria-valuemin={0}
                 aria-valuemax={100}
-                aria-label="Progresso do diagnóstico"
-                className="h-1.5 w-full overflow-hidden rounded-full bg-white/10"
+                aria-label={c.progress}
+                className="h-1.5 w-full overflow-hidden rounded-full bg-surface"
               >
                 <motion.div
                   className="h-full rounded-full bg-primary"
                   initial={false}
                   animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: reduceMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
                 />
               </div>
             </div>
           )}
         </header>
 
-        {/* Card central */}
-        <div className="rounded-2xl border border-border bg-card p-6 shadow-lg shadow-black/30 sm:p-8">
+        <div className="grid items-start gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+        <motion.aside {...reveal()} initial={reduceMotion ? false : { opacity: 0, y: 16 }} className="motion-reduce:!opacity-100 motion-reduce:!transform-none relative flex h-52 items-center justify-center overflow-hidden rounded-[2rem] bg-surface p-6 lg:sticky lg:top-8 lg:h-[520px]" aria-hidden="true">
+          <Image src="/images/formas/simbolo-verde.svg" alt="" width={734} height={691} sizes="(min-width: 1024px) 450px, 90vw" className="absolute -right-20 -top-20 w-[115%] max-w-none" />
+          <Image src="/images/ilustracoes/diagnostico.png" alt="" width={1200} height={968} sizes="(min-width: 1024px) 400px, 220px" className="relative h-48 w-auto object-contain lg:h-auto lg:w-full" />
+        </motion.aside>
+        <div className="min-w-0 rounded-[2rem] border border-border bg-background p-5 sm:p-8">
           <AnimatePresence mode="wait" initial={false}>
             {/* ETAPA 1: CONTATO */}
             {step === 'contact' && (
               <motion.div key="contact" {...stepMotion}>
                 <StepHeader
-                  label={`ETAPA 1 DE ${totalSteps}`}
-                  title="Seus"
-                  titleEm="dados"
-                  desc="Primeiro, nos conte sobre você e sua empresa."
+                  title={c.start}
+                  titleEm={c.startEm}
+                  desc={c.intro}
                 />
 
                 <form onSubmit={handleContactSubmit} className="space-y-5">
                   <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                       <label htmlFor="diag-nome" className={labelClass}>
-                        Seu nome *
+                        {c.name} *
                       </label>
                       <input
                         id="diag-nome"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
-                        placeholder="Nome completo"
+                        placeholder={c.fullName}
                         className={fieldClass}
                       />
                     </div>
                     <div>
                       <label htmlFor="diag-email" className={labelClass}>
-                        E-mail *
+                        {c.email} *
                       </label>
                       <input
                         id="diag-email"
@@ -265,7 +565,7 @@ export default function DiagnosticoPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        placeholder="seu@email.com"
+                        placeholder={c.emailPlaceholder}
                         className={fieldClass}
                       />
                     </div>
@@ -288,14 +588,14 @@ export default function DiagnosticoPage() {
                     </div>
                     <div>
                       <label htmlFor="diag-empresa" className={labelClass}>
-                        Nome da empresa *
+                        {c.company} *
                       </label>
                       <input
                         id="diag-empresa"
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
                         required
-                        placeholder="Empresa LTDA"
+                        placeholder={c.companyPlaceholder}
                         className={fieldClass}
                       />
                     </div>
@@ -304,7 +604,7 @@ export default function DiagnosticoPage() {
                   <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                       <label htmlFor="diag-cnpj" className={labelClass}>
-                        CNPJ
+                        {c.cnpj}
                       </label>
                       <input
                         id="diag-cnpj"
@@ -317,14 +617,14 @@ export default function DiagnosticoPage() {
                     </div>
                     <div>
                       <label htmlFor="diag-ramo" className={labelClass}>
-                        Ramo de atuação *
+                        {c.industry} *
                       </label>
                       <input
                         id="diag-ramo"
                         value={industry}
                         onChange={(e) => setIndustry(e.target.value)}
                         required
-                        placeholder="Ex.: Tecnologia, Varejo, Saúde, Indústria"
+                        placeholder={c.industryPlaceholder}
                         className={fieldClass}
                       />
                     </div>
@@ -332,7 +632,7 @@ export default function DiagnosticoPage() {
 
                   <div>
                     <label htmlFor="diag-negocio" className={labelClass}>
-                      Descreva brevemente seu negócio *
+                      {c.business} *
                     </label>
                     <textarea
                       id="diag-negocio"
@@ -340,21 +640,21 @@ export default function DiagnosticoPage() {
                       onChange={(e) => setBusiness(e.target.value)}
                       required
                       rows={3}
-                      placeholder="O que sua empresa faz? Quantos funcionários? Quais os principais desafios?"
+                      placeholder={c.businessPlaceholder}
                       className={cn(fieldClass, 'resize-y')}
                     />
                   </div>
 
                   <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-between">
                     <Button variant="outline" size="lg" asChild className="h-11">
-                      <Link href="/">Cancelar</Link>
+                      <Link href="/">{c.cancel}</Link>
                     </Button>
                     <Button
                       type="submit"
                       size="lg"
-                      className="h-11 bg-primary-btn px-7 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-primary-foreground hover:bg-primary-btn/90"
+                      className="h-11 px-7"
                     >
-                      Próximo
+                      {c.next}
                       <ArrowRight aria-hidden="true" className="h-4 w-4" />
                     </Button>
                   </div>
@@ -366,10 +666,9 @@ export default function DiagnosticoPage() {
             {step === 'questions' && (
               <motion.div key={`questions-${qPage}`} {...stepMotion}>
                 <StepHeader
-                  label={`ETAPA ${qPage + 2} DE ${totalSteps}`}
-                  title="Diagnóstico"
-                  titleEm="estratégico"
-                  desc="Todas as perguntas são obrigatórias. Responda com o máximo de detalhes."
+                  title={c.routine}
+                  titleEm={c.routineEm}
+                  desc={c.required}
                 />
 
                 <div className="space-y-6">
@@ -382,10 +681,10 @@ export default function DiagnosticoPage() {
                           htmlFor={`diag-${q.id}`}
                           className="mb-2 flex gap-2 text-sm leading-relaxed text-foreground"
                         >
-                          <span className="font-mono text-primary-text">{number}.</span>
+                          <span className="text-primary">{number}.</span>
                           <span>
                             {q.label}
-                            <span className="ml-1 text-primary-text">*</span>
+                            <span className="ml-1 text-primary">*</span>
                           </span>
                         </label>
                         <textarea
@@ -404,7 +703,7 @@ export default function DiagnosticoPage() {
                         />
                         {hasError && (
                           <span className="mt-1.5 block text-xs text-destructive">
-                            Esta pergunta é obrigatória
+                            {c.fieldRequired}
                           </span>
                         )}
                       </div>
@@ -412,7 +711,7 @@ export default function DiagnosticoPage() {
                   })}
 
                   {validationErrors.length > 0 && (
-                    <Banner>Preencha todas as perguntas antes de avançar.</Banner>
+                    <Banner>{c.missing}</Banner>
                   )}
 
                   <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-between">
@@ -424,15 +723,15 @@ export default function DiagnosticoPage() {
                       onClick={prevPage}
                     >
                       <ArrowLeft aria-hidden="true" className="h-4 w-4" />
-                      Voltar
+                      {c.back}
                     </Button>
                     <Button
                       type="button"
                       size="lg"
                       onClick={nextPage}
-                      className="h-11 bg-primary-btn px-7 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-primary-foreground hover:bg-primary-btn/90"
+                      className="h-11 px-7"
                     >
-                      {qPage < totalPages - 1 ? 'Próximo' : 'Revisar e Enviar'}
+                      {qPage < totalPages - 1 ? c.next : c.review}
                       <ArrowRight aria-hidden="true" className="h-4 w-4" />
                     </Button>
                   </div>
@@ -444,34 +743,33 @@ export default function DiagnosticoPage() {
             {step === 'captcha' && (
               <motion.div key="captcha" {...stepMotion}>
                 <StepHeader
-                  label="ETAPA FINAL"
-                  title="Confirmar"
-                  titleEm="envio"
-                  desc="Revise seus dados e complete a verificação para enviar o diagnóstico."
+                  title={c.confirm}
+                  titleEm={c.confirmEm}
+                  desc={c.confirmDesc}
                 />
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="rounded-xl border border-border bg-background/40 p-5">
-                    <h3 className="mb-3 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-primary-text">
-                      Seus dados
+                    <h3 className="mb-3 text-xs text-primary">
+                      {c.details}
                     </h3>
                     <dl className="space-y-2 text-sm">
-                      <ReviewRow label="Nome" value={name} />
-                      <ReviewRow label="E-mail" value={email} />
+                      <ReviewRow label={c.reviewName} value={name} />
+                      <ReviewRow label={c.email} value={email} />
                       <ReviewRow label="WhatsApp" value={whatsapp} />
-                      <ReviewRow label="Empresa" value={companyName} />
-                      <ReviewRow label="Ramo" value={industry} />
+                      <ReviewRow label={c.reviewCompany} value={companyName} />
+                      <ReviewRow label={c.reviewIndustry} value={industry} />
                     </dl>
                   </div>
                   <div className="rounded-xl border border-border bg-background/40 p-5">
-                    <h3 className="mb-3 font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-primary-text">
-                      Respostas
+                    <h3 className="mb-3 text-xs text-primary">
+                      {c.answers}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      <span className="font-serif text-3xl text-foreground">
+                      <span className="text-3xl text-foreground">
                         {answeredCount}
                       </span>{' '}
-                      de {questions.length} perguntas respondidas
+                      {c.of} {questions.length} {c.answered}
                     </p>
                   </div>
                 </div>
@@ -483,12 +781,11 @@ export default function DiagnosticoPage() {
                       sitekey={RECAPTCHA_SITE_KEY}
                       onChange={(token) => setCaptchaToken(token)}
                       onExpired={() => setCaptchaToken(null)}
-                      theme="dark"
+                      theme="light"
                     />
                   ) : (
                     <Banner>
-                      Verificação anti-spam indisponível: defina
-                      NEXT_PUBLIC_RECAPTCHA_SITE_KEY para ativar o reCAPTCHA.
+                      {c.unavailable}
                     </Banner>
                   )}
                 </div>
@@ -511,16 +808,16 @@ export default function DiagnosticoPage() {
                     }}
                   >
                     <ArrowLeft aria-hidden="true" className="h-4 w-4" />
-                    Voltar
+                    {c.back}
                   </Button>
                   <Button
                     type="button"
                     size="lg"
                     onClick={submitAll}
                     disabled={Boolean(RECAPTCHA_SITE_KEY) && !captchaToken}
-                    className="h-11 bg-primary-btn px-7 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-primary-foreground hover:bg-primary-btn/90"
+                    className="h-11 px-7"
                   >
-                    Enviar diagnóstico
+                    {c.send}
                     <ArrowRight aria-hidden="true" className="h-4 w-4" />
                   </Button>
                 </div>
@@ -536,13 +833,13 @@ export default function DiagnosticoPage() {
               >
                 <Loader2
                   aria-hidden="true"
-                  className="h-9 w-9 animate-spin text-primary"
+                  className="h-9 w-9 animate-spin motion-reduce:animate-none text-primary"
                 />
-                <h2 className="mt-6 font-serif text-3xl text-foreground">
-                  Enviando diagnóstico...
+                <h2 className="mt-6 text-3xl text-foreground">
+                  {c.sending}
                 </h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Estamos salvando suas respostas.
+                  {c.saving}
                 </p>
               </motion.div>
             )}
@@ -557,26 +854,24 @@ export default function DiagnosticoPage() {
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 ring-1 ring-primary/40">
                   <Check aria-hidden="true" className="h-8 w-8 text-primary" />
                 </div>
-                <h1 className="mt-6 text-balance font-serif text-4xl leading-tight text-foreground">
-                  Diagnóstico{' '}
-                  <em className="italic text-primary">enviado!</em>
+                <h1 className="mt-6 text-balance text-4xl leading-tight text-foreground">
+                  {c.received}{' '}
+                  <strong className="font-bold">{c.receivedEm}</strong>
                 </h1>
                 <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">
-                  Recebemos suas respostas e vamos analisar com IA antes de entrar
-                  em contato. Você receberá uma pré-análise pelo e-mail e WhatsApp
-                  em até 24h.
+                  {c.success}
                 </p>
 
                 <div className="mt-8 flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
-                  <SuccessStep n={1} state="done" label="Dados coletados" />
-                  <SuccessStep n={2} state="active" label="Análise com IA" />
-                  <SuccessStep n={3} state="idle" label="Contato da equipe" />
+                  <SuccessStep n={1} state="done" label={c.collected} />
+                  <SuccessStep n={2} state="active" label={c.analysis} />
+                  <SuccessStep n={3} state="idle" label={c.contact} />
                 </div>
 
                 <Button variant="outline" size="lg" asChild className="mt-8 h-11">
                   <Link href="/">
                     <ArrowLeft aria-hidden="true" className="h-4 w-4" />
-                    Voltar ao site
+                    {c.home}
                   </Link>
                 </Button>
               </motion.div>
@@ -592,15 +887,15 @@ export default function DiagnosticoPage() {
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/15 ring-1 ring-destructive/40">
                   <X aria-hidden="true" className="h-8 w-8 text-destructive" />
                 </div>
-                <h2 className="mt-6 font-serif text-3xl text-foreground">
-                  Erro ao enviar
+                <h2 className="mt-6 text-3xl text-foreground">
+                  {c.error}
                 </h2>
                 <p className="mt-2 max-w-lg text-sm text-muted-foreground">
-                  {errorMsg}
+                  {c.errorDesc}
                 </p>
                 <Button
                   size="lg"
-                  className="mt-6 h-11 bg-primary-btn px-7 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-primary-foreground hover:bg-primary-btn/90"
+                  className="mt-6 h-11 px-7"
                   onClick={() => {
                     setStep('captcha')
                     setCaptchaToken(null)
@@ -608,15 +903,16 @@ export default function DiagnosticoPage() {
                     captchaRef.current?.reset()
                   }}
                 >
-                  Tentar novamente
+                  {c.retry}
                 </Button>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
+        </div>
 
-        <p className="mt-6 text-center font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-muted-foreground/70">
-          SPX IA · seus dados são usados apenas para a análise do diagnóstico
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          {c.privacy}
         </p>
       </div>
     </div>
@@ -624,24 +920,19 @@ export default function DiagnosticoPage() {
 }
 
 function StepHeader({
-  label,
   title,
   titleEm,
   desc,
 }: {
-  label: string
   title: string
   titleEm: string
   desc: string
 }) {
   return (
     <div className="mb-8">
-      <span className="font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-primary-text">
-        {label}
-      </span>
-      <h1 className="mt-2 text-balance font-serif text-3xl leading-tight text-foreground sm:text-4xl">
+      <h1 className="mt-2 text-balance text-3xl font-normal tracking-tight leading-tight text-foreground sm:text-4xl">
         {title}{' '}
-        <em className="italic text-primary">{titleEm}</em>
+        <strong className="font-bold">{titleEm}</strong>
       </h1>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
     </div>
@@ -649,10 +940,11 @@ function StepHeader({
 }
 
 function ReviewRow({ label, value }: { label: string; value: string }) {
+  const { locale } = useI18n()
   return (
     <div className="flex gap-2">
       <dt className="shrink-0 text-muted-foreground">{label}:</dt>
-      <dd className="min-w-0 truncate text-foreground">{value || '—'}</dd>
+      <dd className="min-w-0 truncate text-foreground">{value || (locale === 'pt' ? 'Não informado' : 'Not provided')}</dd>
     </div>
   )
 }
@@ -689,10 +981,10 @@ function SuccessStep({
     >
       <span
         className={cn(
-          'flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-xs',
+          'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs',
           state === 'idle'
-            ? 'bg-white/10 text-muted-foreground'
-            : 'bg-primary-btn text-primary-foreground',
+            ? 'bg-surface text-muted-foreground'
+            : 'bg-primary text-primary-foreground',
         )}
       >
         {state === 'done' ? <Check aria-hidden="true" className="h-4 w-4" /> : n}

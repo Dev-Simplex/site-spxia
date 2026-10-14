@@ -1,196 +1,98 @@
 "use client"
 
-import dynamic from "next/dynamic"
-import { ChevronRight } from "lucide-react"
-import { motion, useReducedMotion, type Variants } from "motion/react"
+import Image from "next/image"
+import Link from "next/link"
+import { ArrowRight, Briefcase, Code2, UserRound } from "lucide-react"
+import { motion } from "motion/react"
 
-import { GlareCard } from "@/components/ui/glare-card"
-import { AvatarCircles } from "@/components/ui/avatar-circles"
-import { useAnimationScope } from "@/hooks/use-animation-scope"
+import { Button } from "@/components/ui/button"
+import { ShapePanel, useReveal } from "@/components/ui/motion-kit"
 import { useI18n } from "@/lib/i18n/context"
 
-// Rastros decorativos (aria-hidden), um por card: fora do bundle inicial.
-const Meteors = dynamic(() => import("@/components/ui/meteors").then((m) => m.Meteors), {
-  ssr: false,
-})
-
-// Textos copiados de legacy/src/i18n/{pt,en}.js (seção mentoria).
+// Decisão P1 do PLANO: a antiga Mentoria vira "Treinamento", curta e com ilustração.
 const copy = {
   pt: {
-    number: "06",
-    label: "MENTORIA E TREINAMENTO",
-    title: "Conhecimento que",
-    titleEm: "gera resultado.",
-    desc: "Programas práticos para líderes e times. Sem teoria vazia: tudo aplicado ao seu contexto.",
-    counterLabel: "empresas atendidas",
+    title: "Sua equipe à vontade",
+    titleEm: "com a IA.",
+    desc: "Programas práticos para quem lidera e para quem executa, com exemplos da sua empresa.",
+    cta: "Vamos conversar",
     programs: [
-      {
-        audience: "CEOs, diretores, gestores",
-        title: "IA para Líderes de Negócio",
-        topics: [
-          "Panorama real de IA em 2026",
-          "Onde IA gera receita vs onde queima caixa",
-          "Como avaliar fornecedores e projetos",
-          "Roadmap prático para sua empresa",
-        ],
-      },
-      {
-        audience: "Desenvolvedores, tech leads, analistas",
-        title: "IA para Times Técnicos",
-        topics: [
-          "Claude Code e agentes na prática",
-          "Automações com n8n e APIs",
-          "Integração de IA em sistemas existentes",
-          "Boas práticas e armadilhas",
-        ],
-      },
-      {
-        audience: "Empreendedores e profissionais",
-        title: "Mentoria Individual",
-        topics: [
-          "Diagnóstico personalizado",
-          "Plano de implementação sob medida",
-          "Acompanhamento semanal",
-          "Acesso direto ao time SPXIA",
-        ],
-      },
+      { audience: "Donos, diretores e gestores", title: "IA para quem decide" },
+      { audience: "Desenvolvedores e analistas", title: "IA para equipes técnicas" },
+      { audience: "Empreendedores e profissionais", title: "Mentoria individual" },
     ],
   },
   en: {
-    number: "06",
-    label: "MENTORING & TRAINING",
-    title: "Knowledge that",
-    titleEm: "drives results.",
-    desc: "Practical programs for leaders and teams. No empty theory: everything applied to your context.",
-    counterLabel: "companies served",
+    title: "Your team at ease",
+    titleEm: "with AI.",
+    desc: "Hands-on programs for the people who lead and the people who do the work, with examples from your company.",
+    cta: "Let's talk",
     programs: [
-      {
-        audience: "CEOs, directors, managers",
-        title: "AI for Business Leaders",
-        topics: [
-          "Real AI landscape in 2026",
-          "Where AI generates revenue vs burns cash",
-          "How to evaluate vendors and projects",
-          "Practical roadmap for your company",
-        ],
-      },
-      {
-        audience: "Developers, tech leads, analysts",
-        title: "AI for Technical Teams",
-        topics: [
-          "Claude Code and agents in practice",
-          "Automations with n8n and APIs",
-          "AI integration into existing systems",
-          "Best practices and pitfalls",
-        ],
-      },
-      {
-        audience: "Entrepreneurs and professionals",
-        title: "Individual Mentoring",
-        topics: [
-          "Personalized diagnosis",
-          "Custom implementation plan",
-          "Weekly follow-up",
-          "Direct access to SPXIA team",
-        ],
-      },
+      { audience: "Owners, directors and managers", title: "AI for decision-makers" },
+      { audience: "Developers and analysts", title: "AI for technical teams" },
+      { audience: "Business owners and professionals", title: "One-on-one mentoring" },
     ],
   },
 } as const
 
-// Iniciais fictícias — a tarefa pede círculos gerados, sem fotos reais.
-const avatars = [
-  { initials: "MC" },
-  { initials: "RS" },
-  { initials: "AL" },
-  { initials: "JP" },
-  { initials: "TF" },
-]
+const icons = [Briefcase, Code2, UserRound]
 
 export function Mentoria() {
   const { locale } = useI18n()
   const t = copy[locale]
-  const reduceMotion = useReducedMotion()
-  const scope = useAnimationScope<HTMLElement>()
-
-  const cardVariants: Variants = {
-    hidden: {
-      opacity: 0,
-      y: reduceMotion ? 0 : 30,
-      filter: reduceMotion ? "blur(0px)" : "blur(6px)",
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 0.55, ease: "easeOut" },
-      // Limpa o filter para o GlareCard voltar a compor sem camada rasterizada.
-      transitionEnd: { filter: "none" },
-    },
-  }
+  const reveal = useReveal()
 
   return (
-    <section {...scope} id="mentoria" className="bg-background py-24 sm:py-28 lg:py-32">
-      <div className="container mx-auto px-4">
-        <div className="max-w-2xl">
-          <p className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-primary-text">
-            {t.number} · {t.label}
-          </p>
-          <h2 className="mt-4 font-serif text-3xl text-foreground md:text-4xl lg:text-5xl">
-            {t.title} <em className="italic text-primary">{t.titleEm}</em>
-          </h2>
-          <p className="mt-4 text-muted-foreground">{t.desc}</p>
-        </div>
-
-        <motion.div
-          className="mt-16 grid gap-8 md:grid-cols-3"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
-        >
-          {t.programs.map((program, index) => (
-            <motion.div key={program.title} variants={cardVariants} className="group relative h-full">
-              <GlareCard className="flex flex-col p-8">
-                <p className="font-mono text-[0.625rem] font-medium uppercase tracking-[0.15em] text-primary-text">
-                  {program.audience}
-                </p>
-                <h3 className="mt-3 font-serif text-2xl text-foreground">
-                  {program.title}
-                </h3>
-                <ul className="mt-6 space-y-3">
-                  {program.topics.map((topic) => (
-                    <li
-                      key={topic}
-                      className="flex items-start gap-2 text-sm text-muted-foreground transition-colors duration-300 group-hover:text-foreground/80"
-                    >
-                      <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-primary transition-transform duration-300 group-hover:translate-x-0.5" />
-                      <span>{topic}</span>
-                    </li>
-                  ))}
-                </ul>
-              </GlareCard>
-
-              {/* Meteoros passam por cima do card; o clip acompanha o raio do GlareCard. */}
-              <Meteors
-                number={7 + index}
-                className="rounded-[20px] opacity-60 transition-opacity duration-500 group-hover:opacity-100 motion-reduce:transition-none"
-              />
-            </motion.div>
-          ))}
+    <section id="mentoria" className="scroll-mt-24 bg-background">
+      <div className="mx-auto grid w-full max-w-7xl items-center gap-x-16 gap-y-12 px-4 py-24 md:px-8 md:py-32 lg:grid-cols-12 lg:px-10">
+        <motion.div className="lg:col-span-7" {...reveal()}>
+          <ShapePanel className="aspect-[4/3] px-6 sm:px-12">
+            <Image
+              src="/images/ilustracoes/treinamento.png"
+              alt=""
+              width={1200}
+              height={765}
+              sizes="(min-width: 1024px) 52vw, 90vw"
+              className="h-auto w-full"
+            />
+          </ShapePanel>
         </motion.div>
 
         <motion.div
-          className="mt-16 flex flex-col items-center justify-center gap-4 sm:flex-row"
-          initial={{ opacity: 0, y: reduceMotion ? 0 : 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="lg:col-span-5"
+          {...reveal(0.1)}
         >
-          <AvatarCircles avatars={avatars} numPeople={50} />
-          <span className="font-mono text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-            {t.counterLabel}
-          </span>
+          <h2 className="text-balance text-4xl leading-[1.08] tracking-tight text-foreground md:text-5xl">
+            {t.title} <strong className="font-bold">{t.titleEm}</strong>
+          </h2>
+          <p className="mt-5 text-lg text-muted-foreground">{t.desc}</p>
+
+          <ul className="mt-8 divide-y divide-border border-y border-border">
+            {t.programs.map((program, index) => {
+              const Icon = icons[index]
+              return (
+                <motion.li key={program.title} className="flex items-center gap-4 py-4" {...reveal(0.2 + index * 0.08)}>
+                  <span className="grid size-11 shrink-0 place-items-center rounded-[14px] bg-accent text-primary">
+                    <Icon className="size-5" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h3 className="font-semibold text-foreground">{program.title}</h3>
+                    <p className="text-sm text-muted-foreground">{program.audience}</p>
+                  </div>
+                </motion.li>
+              )
+            })}
+          </ul>
+
+          <Button asChild size="lg" className="mt-8">
+            <Link href="/diagnostico" className="group">
+              {t.cta}
+              <ArrowRight
+                aria-hidden="true"
+                className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none"
+              />
+            </Link>
+          </Button>
         </motion.div>
       </div>
     </section>

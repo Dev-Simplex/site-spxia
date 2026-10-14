@@ -7,7 +7,6 @@ import { Problema } from "@/components/sections/problema"
 import { Servicos } from "@/components/sections/servicos"
 import { ComoFunciona } from "@/components/sections/como-funciona"
 import { Cases } from "@/components/sections/cases"
-import { Resultados } from "@/components/sections/resultados"
 import { Mentoria } from "@/components/sections/mentoria"
 import { Produtos } from "@/components/sections/produtos"
 import { Quote } from "@/components/sections/quote"
@@ -29,7 +28,6 @@ export default function HomePage() {
         <Servicos />
         <ComoFunciona />
         <Cases />
-        <Resultados />
         <Mentoria />
         {/* Oculta até NEXT_PUBLIC_SHOW_PRODUCTS=true */}
         <Produtos />

@@ -13,7 +13,7 @@ const statusLabels: Record<string, string> = {
   descartado: "Descartado",
 }
 const statusColors: Record<string, string> = {
-  novo: "#F90108",
+  novo: "var(--accent-brand-text)",
   em_contato: "#fbbf24",
   agendado: "#60a5fa",
   concluido: "#4ade80",
@@ -155,7 +155,7 @@ function Diagnosticos() {
           <span
             className="diag-status-badge"
             style={{
-              background: statusColors[selected.status],
+              background: selected.status === "novo" ? "var(--accent-brand)" : statusColors[selected.status],
               color: selected.status === "novo" ? "#fff" : "#000",
             }}
           >
@@ -202,20 +202,20 @@ function Diagnosticos() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {selected.whatsapp || "—"}
+                    {selected.whatsapp || "Não informado"}
                   </a>
                 </div>
                 <div className="diag-detail-row">
                   <span className="diag-detail-label">Empresa</span>
-                  <span>{selected.company_name || "—"}</span>
+                  <span>{selected.company_name || "Não informado"}</span>
                 </div>
                 <div className="diag-detail-row">
                   <span className="diag-detail-label">CNPJ</span>
-                  <span>{selected.cnpj || "—"}</span>
+                  <span>{selected.cnpj || "Não informado"}</span>
                 </div>
                 <div className="diag-detail-row">
                   <span className="diag-detail-label">Ramo</span>
-                  <span>{selected.industry || "—"}</span>
+                  <span>{selected.industry || "Não informado"}</span>
                 </div>
               </div>
               <div className="diag-detail-card">
@@ -285,7 +285,7 @@ function Diagnosticos() {
                   height="48"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="var(--red)"
+                  stroke="var(--accent-brand-text)"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -301,7 +301,7 @@ function Diagnosticos() {
             ) : (
               <div className="diag-analysis-content">
                 <div className="diag-analysis-header">
-                  <h3>Pré-Análise — {selected.company_name || selected.name}</h3>
+                  <h3>Pré-análise: {selected.company_name || selected.name}</h3>
                   <button
                     className="btn btn-secondary btn-sm"
                     onClick={generateAnalysis}
@@ -414,7 +414,7 @@ function Diagnosticos() {
                     <span
                       className="diag-card-status"
                       style={{
-                        background: statusColors[item.status],
+                        background: item.status === "novo" ? "var(--accent-brand)" : statusColors[item.status],
                         color: item.status === "novo" ? "#fff" : "#000",
                       }}
                     >
@@ -447,7 +447,7 @@ function buildLocalAnalysis(diag: Diagnostic) {
   const name = diag.company_name || diag.name
   const industry = diag.industry || "não informado"
 
-  let analysis = `## Pré-Análise de Diagnóstico — ${name}\n`
+  let analysis = `## Pré-análise de diagnóstico: ${name}\n`
   analysis += `**Ramo:** ${industry} | **Contato:** ${diag.name} (${diag.email})\n\n`
 
   // Resumo
@@ -463,11 +463,11 @@ function buildLocalAnalysis(diag: Diagnostic) {
 
   // Oportunidades
   analysis += `### OPORTUNIDADES DE IA IDENTIFICADAS\n`
-  if (a.q3) analysis += `- **Alta Prioridade — Automação de processos:** ${a.q3}\n`
-  if (a.q5) analysis += `- **Alta Prioridade — Decisões assistidas:** ${a.q5}\n`
-  if (a.q14) analysis += `- **Média Prioridade — Velocidade operacional:** ${a.q14}\n`
-  if (a.q15) analysis += `- **Média Prioridade — Padronização:** ${a.q15}\n`
-  if (a.q12) analysis += `- **Média Prioridade — Decisões data-driven:** ${a.q12}\n`
+  if (a.q3) analysis += `- **Alta prioridade (automação de processos):** ${a.q3}\n`
+  if (a.q5) analysis += `- **Alta prioridade (decisões assistidas):** ${a.q5}\n`
+  if (a.q14) analysis += `- **Média prioridade (velocidade operacional):** ${a.q14}\n`
+  if (a.q15) analysis += `- **Média prioridade (padronização):** ${a.q15}\n`
+  if (a.q12) analysis += `- **Média prioridade (decisões baseadas em dados):** ${a.q12}\n`
   analysis += "\n"
 
   // Quick wins
@@ -484,11 +484,11 @@ function buildLocalAnalysis(diag: Diagnostic) {
   if (a.q16) {
     const ready = (a.q16 || "").toLowerCase()
     if (ready.includes("não") || ready.includes("pouco") || ready.includes("resistência")) {
-      analysis += `- **ALERTA:** Equipe pode não estar preparada — considerar programa de treinamento.\n`
+      analysis += `- **ALERTA:** Equipe pode não estar preparada; considerar programa de treinamento.\n`
     }
   }
   if (!a.q17 || a.q17.toLowerCase().includes("não")) {
-    analysis += `- **ALERTA:** Sem responsável interno definido — risco de projeto perder força.\n`
+    analysis += `- **ALERTA:** Sem responsável interno definido; o projeto corre o risco de perder força.\n`
   }
   analysis += "\n"
 

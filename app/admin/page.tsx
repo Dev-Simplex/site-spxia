@@ -78,7 +78,7 @@ export default function DashboardPage() {
       <h1>
         Olá, <em>{profile?.full_name || "Membro"}</em>
       </h1>
-      <p className="admin-page-desc">Bem-vindo à área de membros SPXIA.</p>
+      <p className="admin-page-desc">Bem-vindo à área de membros SPXia.</p>
 
       {userProducts.length > 0 && (
         <div className="dash-my-products">
@@ -96,7 +96,7 @@ export default function DashboardPage() {
       )}
 
       <div className="dash-stats">
-        <DashCard value={stats.posts} label="Posts na Comunidade" color="var(--red)" />
+        <DashCard value={stats.posts} label="Posts na Comunidade" color="var(--accent-brand-text)" />
         <DashCard value={stats.sessions} label="Sessões de Mentoria" color="#4ade80" />
         <DashCard value={stats.courses} label="Formações Disponíveis" color="#60a5fa" />
         <DashCard value={stats.tickets} label="Tickets de Suporte" color="#fbbf24" />

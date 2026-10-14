@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SPXia — mockup do site light</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f4f6fd;
+    --fg: #07174f;
+    --muted: #4a5578;
+    --border: #e2e6f3;
+    --primary: #001fda;
+    --primary-tint: #eef1ff;
+    --green: #1ec737;
+    --deep: #07174f;
+    --sky: #57b1d8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; }
+  body { font-family: Inter, system-ui, sans-serif; color: var(--fg); background: var(--bg); line-height: 1.5; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: min(1200px, 100% - 48px); margin-inline: auto; }
+  strong { font-weight: 700; }
+
+  .kicker { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--primary); }
+  .kicker svg { width: 12px; height: 12px; fill: var(--green); }
+  h1, h2, h3 { font-weight: 400; letter-spacing: -0.03em; }
+  h2 { font-size: 46px; line-height: 1.08; }
+  .lead { font-size: 18px; color: var(--muted); max-width: 560px; }
+
+  .btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 26px; border-radius: 999px; font-size: 16px; font-weight: 600; white-space: nowrap; }
+  .btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 10px 24px -12px rgba(0, 31, 218, .55); }
+  .btn-outline { border: 1.5px solid #d5dbf0; color: var(--fg); background: #fff; }
+  .btn-white { background: #fff; color: var(--primary); }
+  .btn-ghost-white { border: 1.5px solid rgba(255, 255, 255, .45); color: #fff; }
+
+  .icon { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .icon-box { width: 46px; height: 46px; border-radius: 14px; background: var(--primary-tint); color: var(--primary); display: grid; place-items: center; flex: none; }
+
+  /* ———— Header ———— */
+  header { position: sticky; top: 0; z-index: 10; background: rgba(255, 255, 255, .92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 76px; }
+  .nav-links { display: flex; gap: 34px; font-size: 15px; font-weight: 500; }
+  .nav-right { display: flex; align-items: center; gap: 18px; font-size: 15px; font-weight: 500; }
+  .flags { display: flex; gap: 6px; padding: 4px; border: 1px solid var(--border); border-radius: 999px; }
+  .flags img { width: 22px; height: 22px; border-radius: 50%; }
+  .flags img + img { opacity: .45; }
+  .nav .btn { height: 44px; padding: 0 20px; font-size: 15px; }
+
+  /* ———— Hero ———— */
+  .hero { position: relative; overflow: hidden; padding: 56px 0 0; }
+  .hero-grid { display: grid; grid-template-columns: 1.02fr 1fr; gap: 40px; align-items: center; }
+  .hero-copy { padding-bottom: 72px; }
+  .hero h1 { font-size: 74px; line-height: 1.02; letter-spacing: -0.04em; }
+  .hero .lead { margin-top: 24px; font-size: 19px; }
+  .hero-ctas { display: flex; gap: 14px; margin-top: 36px; }
+  .trust { display: flex; margin-top: 48px; }
+  .trust div { padding: 0 28px; border-left: 1px solid var(--border); }
+  .trust div:first-child { padding-left: 0; border-left: 0; }
+  .trust b { display: block; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+  .trust span { font-size: 14px; color: var(--muted); }
+
+  .hero-visual { position: relative; height: 640px; }
+  .hero-shape { position: absolute; width: 600px; right: -70px; bottom: 30px; }
+  .hero-person { position: absolute; bottom: 0; left: 52%; transform: translateX(-50%); height: 610px; width: auto; max-width: none; filter: drop-shadow(0 30px 40px rgba(7, 23, 79, .18)); }
+  .hero-star { position: absolute; fill: var(--primary); }
+  .hero-star.s1 { width: 34px; height: 34px; top: 70px; right: 40px; }
+  .hero-star.s2 { width: 18px; height: 18px; top: 128px; right: 96px; fill: none; stroke: var(--deep); stroke-width: 2.4; }
+  .float { position: absolute; background: #fff; border-radius: 18px; box-shadow: 0 24px 48px -20px rgba(7, 23, 79, .28); padding: 16px 18px; }
+  .float-chat { top: 132px; left: -18px; width: 300px; }
+  .float-chat .meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); font-weight: 500; }
+  .float-chat .meta b { color: var(--fg); font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; }
+  .bubble { margin-top: 10px; font-size: 14px; line-height: 1.4; padding: 10px 12px; border-radius: 14px; background: var(--surface); max-width: 92%; }
+  .bubble.ai { margin-left: auto; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
+  .float-visit { bottom: 92px; right: -6px; display: flex; gap: 12px; align-items: center; padding-right: 22px; }
+  .float-visit span { white-space: nowrap; }
+  .check-circle { width: 40px; height: 40px; border-radius: 50%; background: var(--green); display: grid; place-items: center; flex: none; }
+  .check-circle svg { width: 20px; height: 20px; stroke: var(--deep); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .float-visit b { display: block; font-size: 15px; font-weight: 600; }
+  .float-visit span { font-size: 13px; color: var(--muted); }
+
+  /* ———— Integrações ———— */
+  .integrations { background: var(--surface); border-block: 1px solid var(--border); padding: 26px 0; }
+  .integrations .wrap { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .integrations p { font-size: 15px; font-weight: 600; white-space: nowrap; }
+  .chips { display: flex; gap: 10px; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 999px; background: #fff; border: 1px solid var(--border); font-size: 14.5px; font-weight: 500; }
+  .chip .icon { width: 18px; height: 18px; color: var(--primary); }
+
+  section.block { padding: 120px 0; }
+
+  /* ———— Problema ———— */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+  .illus-panel { position: relative; background: var(--surface); border-radius: 32px; aspect-ratio: 1 / 1; overflow: hidden; display: grid; place-items: center; }
+  .illus-panel .shape { position: absolute; width: 78%; right: -22%; top: -18%; }
+  .illus-panel .art { position: relative; width: 78%; }
+  .pains { margin-top: 36px; display: grid; gap: 26px; }
+  .pain { display: flex; gap: 18px; }
+  .pain h3 { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .pain p { font-size: 16px; color: var(--muted); margin-top: 4px; }
+
+  /* ———— Soluções ———— */
+  .solutions { background: var(--surface); }
+  .section-head { display: flex; justify-content: space-between; align-items: end; gap: 40px; margin-bottom: 52px; }
+  .section-head .lead { max-width: 420px; }
+  .bento { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; }
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 32px; }
+  .card h3 { font-size: 28px; line-height: 1.15; margin-top: 18px; }
+  .card p.desc { font-size: 16px; color: var(--muted); margin-top: 10px; }
+  .product-badge { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--primary); background: var(--primary-tint); padding: 6px 12px 6px 8px; border-radius: 999px; }
+  .product-badge svg { width: 18px; height: 18px; fill: var(--primary); }
+  .chat-card { grid-row: span 2; display: flex; flex-direction: column; }
+  .inbox { margin-top: 26px; border: 1px solid var(--border); border-radius: 18px; overflow: hidden; flex: 1; display: flex; flex-direction: column; }
+  .inbox-top { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 600; }
+  .pill-green { background: var(--green); color: var(--deep); font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
+  .channels { display: flex; gap: 8px; padding: 12px 18px; border-bottom: 1px solid var(--border); }
+  .channels span { font-size: 12.5px; font-weight: 500; padding: 4px 10px; border-radius: 999px; background: var(--surface); color: var(--muted); }
+  .channels span.on { background: var(--primary-tint); color: var(--primary); }
+  .thread { padding: 8px 18px 18px; display: flex; flex-direction: column; flex: 1; }
+  .thread .bubble { max-width: 78%; }
+  .thread .who { font-size: 12px; color: var(--muted); margin-top: 14px; font-weight: 500; }
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .tags span { font-size: 12.5px; font-weight: 600; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--border); }
+  .handoff { margin-top: 20px; display: flex; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 14px; background: var(--surface); }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--deep); color: #fff; font-size: 13px; font-weight: 600; display: grid; place-items: center; flex: none; }
+  .handoff b { font-size: 14px; display: block; }
+  .handoff span { font-size: 13px; color: var(--muted); }
+  .handoff .avatar, .call-top .avatar { color: #fff; font-size: 13px; }
+  .call { margin-top: 22px; border: 1px solid var(--border); border-radius: 18px; padding: 16px 18px; }
+  .call-top { display: flex; align-items: center; gap: 12px; }
+  .call-top b { font-size: 15px; display: block; }
+  .call-top span { font-size: 13px; color: var(--muted); }
+  .call-top .time { margin-left: auto; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .wave { display: flex; align-items: center; justify-content: space-between; height: 44px; margin-top: 14px; }
+  .wave i { width: 7px; border-radius: 4px; background: var(--primary); }
+  .wave i:nth-child(3n) { background: var(--green); }
+  .checklist { margin-top: 14px; display: grid; gap: 8px; }
+  .checklist div { display: flex; gap: 10px; align-items: center; font-size: 14.5px; font-weight: 500; }
+  .checklist .check-circle { width: 22px; height: 22px; }
+  .checklist .check-circle svg { width: 12px; height: 12px; }
+  .small-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .small-cards .card { padding: 28px; }
+  .sc-head { display: flex; align-items: center; gap: 14px; }
+  .small-cards h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.015em; margin-top: 0; }
+  .small-cards p { margin-top: 14px; }
+  .small-cards p { font-size: 15px; color: var(--muted); margin-top: 8px; }
+  .also { margin-top: 28px; font-size: 15px; color: var(--muted); }
+  .also b { color: var(--fg); font-weight: 600; }
+
+  /* ———— Como funciona ———— */
+  .how-art { margin-top: 44px; width: 440px; }
+  .step { display: grid; grid-template-columns: 56px 1fr; gap: 22px; position: relative; padding-bottom: 38px; }
+  .step:not(:last-child)::before { content: ""; position: absolute; left: 27px; top: 58px; bottom: 6px; width: 2px; background: var(--border); }
+  .num { width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--primary); color: var(--primary); font-weight: 700; font-size: 18px; display: grid; place-items: center; background: #fff; }
+  .step:first-child .num { background: var(--primary); color: #fff; }
+  .step h3 { font-size: 22px; font-weight: 600; letter-spacing: -0.015em; margin-top: 12px; }
+  .step p { font-size: 16px; color: var(--muted); margin-top: 6px; max-width: 460px; }
+
+  /* ———— Resultados ———— */
+  .results { background: var(--surface); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .stat { background: #fff; border: 1px solid var(--border); border-radius: 22px; padding: 28px; }
+  .stat b { font-size: 54px; font-weight: 700; letter-spacing: -0.04em; color: var(--primary); line-height: 1; display: block; }
+  .stat h3 { font-size: 15px; font-weight: 600; letter-spacing: 0; margin-top: 18px; }
+  .stat p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+  .cases-head { display: flex; justify-content: space-between; align-items: end; margin: 80px 0 28px; }
+  .cases-head h3 { font-size: 34px; letter-spacing: -0.03em; }
+  .cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .case { background: #fff; border: 1px solid var(--border); border-radius: 22px; padding: 28px; display: flex; flex-direction: column; }
+  .sector { align-self: start; font-size: 13px; font-weight: 600; color: var(--primary); background: var(--primary-tint); padding: 5px 10px; border-radius: 999px; }
+  .case h4 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin-top: 18px; }
+  .case p { font-size: 15px; color: var(--muted); margin-top: 8px; flex: 1; }
+  .metric { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); display: flex; align-items: baseline; gap: 10px; }
+  .metric b { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; }
+  .metric span { font-size: 14px; color: var(--muted); }
+
+  /* ———— CTA azul ———— */
+  .cta { position: relative; overflow: hidden; background: var(--primary); color: #fff; padding: 110px 0; }
+  .cta .watermark { position: absolute; width: 760px; height: 700px; right: -170px; top: -120px; fill: #fff; opacity: .07; }
+  .cta .kicker { color: rgba(255, 255, 255, .85); }
+  .cta h2 { font-size: 54px; color: #fff; }
+  .cta .lead { color: rgba(255, 255, 255, .86); margin-top: 20px; }
+  .cta-grid { position: relative; display: grid; grid-template-columns: 1.15fr 1fr; gap: 64px; align-items: center; }
+  .cta-ctas { display: flex; gap: 14px; margin-top: 36px; }
+  .booking { background: #fff; color: var(--fg); border-radius: 26px; padding: 28px; box-shadow: 0 32px 64px -28px rgba(0, 0, 0, .35); max-width: 440px; justify-self: end; position: relative; }
+  .booking .b-top { display: flex; align-items: center; gap: 12px; }
+  .booking .b-top b { font-size: 17px; display: block; }
+  .booking .b-top span { font-size: 13.5px; color: var(--muted); }
+  .days { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 22px; }
+  .days div { border: 1px solid var(--border); border-radius: 14px; text-align: center; padding: 10px 0; font-size: 12px; color: var(--muted); font-weight: 500; }
+  .days div b { display: block; font-size: 18px; color: var(--fg); font-weight: 600; margin-top: 2px; }
+  .days div.on { border-color: var(--primary); background: var(--primary-tint); }
+  .days div.on b { color: var(--primary); }
+  .slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+  .slots span { text-align: center; border: 1px solid var(--border); border-radius: 12px; padding: 10px 0; font-size: 14px; font-weight: 600; }
+  .slots span.on { background: var(--green); border-color: var(--green); color: var(--deep); }
+  .booking .btn { width: 100%; justify-content: center; margin-top: 18px; }
+  .cta-star { position: absolute; width: 46px; height: 46px; fill: var(--green); top: -22px; right: 34px; }
+
+  /* ———— FAQ ———— */
+  .faq-grid { display: grid; grid-template-columns: 1fr 1.55fr; gap: 72px; align-items: start; }
+  .contact-card { margin-top: 36px; border: 1px solid var(--border); border-radius: 22px; padding: 24px; display: flex; gap: 16px; align-items: center; }
+  .contact-card b { display: block; font-size: 16px; }
+  .contact-card span { font-size: 14.5px; color: var(--primary); font-weight: 500; }
+  .faq-item { border-bottom: 1px solid var(--border); padding: 24px 0; }
+  .faq-item:first-child { border-top: 1px solid var(--border); }
+  .faq-q { display: flex; justify-content: space-between; align-items: center; gap: 24px; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+  .faq-q .tog { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); display: grid; place-items: center; flex: none; color: var(--primary); }
+  .faq-q .tog svg { width: 16px; height: 16px; }
+  .faq-item.open .tog { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .faq-a { font-size: 16px; color: var(--muted); margin-top: 12px; max-width: 620px; }
+
+  /* ———— Footer ———— */
+  footer { background: var(--deep); color: rgba(255, 255, 255, .74); padding: 80px 0 32px; }
+  .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 48px; }
+  .foot-grid h2 { color: #fff; font-size: 14px; font-weight: 600; letter-spacing: 0; line-height: 1.5; margin-bottom: 18px; }
+  .foot-grid li { list-style: none; font-size: 15px; margin-top: 10px; }
+  .foot-brand p { font-size: 15px; margin-top: 20px; max-width: 300px; }
+  .foot-bottom { margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, .14); display: flex; justify-content: space-between; gap: 24px; font-size: 13.5px; }
+
+  /* ———— Mobile ———— */
+  @media (max-width: 820px) {
+    .nav-links, .nav-right .login, .nav-right .flags { display: none; }
+    .nav .btn { height: 40px; padding: 0 16px; font-size: 14px; }
+    .hero { padding-top: 32px; }
+    .hero-grid, .two-col, .bento, .faq-grid, .cta-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 44px; }
+    .hero .lead { font-size: 17px; }
+    .hero-ctas { flex-direction: column; }
+    .hero-ctas .btn { justify-content: center; }
+    .trust { margin-top: 32px; }
+    .trust div { padding: 0 14px; }
+    .trust b { font-size: 19px; }
+    .trust span { font-size: 12.5px; }
+    .hero-copy { padding-bottom: 8px; }
+    .hero-visual { height: 470px; }
+    .hero-shape { width: 420px; right: -90px; }
+    .hero-person { height: 450px; }
+    .float-chat { width: 236px; left: 0; top: 40px; }
+    .float-visit { right: 0; bottom: 40px; width: 230px; }
+    h2, .cta h2 { font-size: 34px; }
+    section.block, .cta { padding: 80px 0; }
+    .section-head { flex-direction: column; align-items: start; }
+    .integrations .wrap { flex-direction: column; align-items: start; }
+    .stats, .cases, .small-cards, .foot-grid { grid-template-columns: 1fr; }
+    .how-art { width: 100%; }
+    .booking { justify-self: stretch; }
+    .cta-ctas { flex-direction: column; }
+    .foot-bottom { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="spx" viewBox="0 0 130 120">
+    <path d="M55.5731 0.00505867H45.3863C27.7652 -0.231489 11.645 9.82968 4.20124 25.7068C-6.24256 47.9864 3.45877 74.464 25.8726 84.8453L38.2471 71.7563C51.7322 56.9327 43.4825 44.0014 33.0117 29.6508C49.9871 46.84 62.5203 44.1591 77.1159 29.1777L105.711 0.00505867H55.5731Z"/>
+    <path d="M90.6008 28.7056C67.7555 52.2027 71.2457 63.7146 89.6489 84.6886C71.4044 68.2879 59.0298 65.7647 44.1169 80.273L3.7854 119.54H84.4135C104.808 117.963 121.742 103.265 126.062 83.3907C131.461 58.5563 115.585 34.072 90.6008 28.7056Z"/>
+  </symbol>
+  <symbol id="star" viewBox="0 0 24 24"><path d="M12 0C12.9 7.2 16.8 11.1 24 12C16.8 12.9 12.9 16.8 12 24C11.1 16.8 7.2 12.9 0 12C7.2 11.1 11.1 7.2 12 0Z"/></symbol>
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+</svg>
+
+<header>
+  <div class="wrap nav">
+    <img src="../../../public/brand/spxia-horizontal-colorida.svg" alt="SPXia" style="height:30px" />
+    <nav class="nav-links">
+      <a>Soluções</a><a>Como funciona</a><a>Resultados</a><a>Sobre</a><a>Dúvidas</a>
+    </nav>
+    <div class="nav-right">
+      <div class="flags"><img src="../../../public/flags/br.svg" alt="Português" /><img src="../../../public/flags/us.svg" alt="English" /></div>
+      <a class="login">Entrar</a>
+      <a class="btn btn-primary">Agendar diagnóstico</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <h1>Sua rotina pode ser <strong>mais simples.</strong></h1>
+        <p class="lead">Inteligência artificial para facilitar o atendimento e reduzir tarefas repetitivas. A SPXia conecta a tecnologia aos processos da sua empresa para sua equipe ter mais tempo para cuidar dos clientes.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary">Quero conhecer <svg><use href="#arrow" /></svg></a>
+          <a class="btn btn-outline">Ver soluções</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img class="hero-shape" src="../../../public/images/formas/simbolo-verde.svg" alt="" />
+        <svg class="hero-star s1"><use href="#star" /></svg>
+        <svg class="hero-star s2" viewBox="0 0 24 24"><path d="M12 0C12.9 7.2 16.8 11.1 24 12C16.8 12.9 12.9 16.8 12 24C11.1 16.8 7.2 12.9 0 12C7.2 11.1 11.1 7.2 12 0Z" /></svg>
+        <img class="hero-person" src="../../../../spxia-rebrand-assets/fotos/hero-pessoa-tentativa-01.png" alt="" />
+        <div class="float float-chat">
+          <div class="meta"><b><span class="dot"></span>WhatsApp · Carla</b><span>23:04</span></div>
+          <div class="bubble">Oi! Ainda tem unidade de 3 quartos?</div>
+          <div class="bubble ai">Temos, sim! Você pensa em financiamento ou à vista?</div>
+        </div>
+        <div class="float float-visit">
+          <span class="check-circle"><svg><use href="#check" /></svg></span>
+          <div><b>Visita agendada</b><span>sábado, 10h · com a corretora</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTEGRAÇÕES -->
+  <div class="integrations">
+    <div class="wrap">
+      <p>Funciona com o que sua empresa já usa</p>
+      <div class="chips">
+        <span class="chip"><svg class="icon" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></svg>WhatsApp</span>
+        <span class="chip"><svg class="icon" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><path d="M17.5 6.5h.01" /></svg>Instagram</span>
+        <span class="chip"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></svg>Site</span>
+        <span class="chip"><svg class="icon" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>E-mail</span>
+        <span class="chip"><svg class="icon" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3" /><path d="M3 5V19A9 3 0 0 0 21 19V5" /><path d="M3 12A9 3 0 0 0 21 12" /></svg>Seu CRM</span>
+        <span class="chip"><svg class="icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>Telefone</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROBLEMA -->
+  <section class="block">
+    <div class="wrap two-col">
+      <div class="illus-panel">
+        <img class="shape" src="../../../public/images/formas/simbolo-verde.svg" alt="" />
+        <img class="art" src="../../../public/images/ilustracoes/ilustracao-fio-embolado.png" alt="" />
+      </div>
+      <div>
+        <h2>Por onde começar com IA?<br /><strong>Pelo que complica o seu dia.</strong></h2>
+        <div class="pains">
+          <div class="pain">
+            <span class="icon-box"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg></span>
+            <div><h3>O cliente chama fora do horário</h3><p>A mensagem das 23h fica sem resposta até o dia seguinte, e o interesse esfria.</p></div>
+          </div>
+          <div class="pain">
+            <span class="icon-box"><svg class="icon" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4" /><path d="M3 11v-1a4 4 0 0 1 4-4h14" /><path d="m7 22-4-4 4-4" /><path d="M21 13v1a4 4 0 0 1-4 4H3" /></svg></span>
+            <div><h3>A mesma resposta, várias vezes por dia</h3><p>Preço, disponibilidade, documentos: a equipe repete tudo à mão.</p></div>
+          </div>
+          <div class="pain">
+            <span class="icon-box"><svg class="icon" viewBox="0 0 24 24"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z" /><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65" /><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65" /></svg></span>
+            <div><h3>Informação espalhada</h3><p>WhatsApp, planilha e CRM que não conversam, e ninguém sabe em que pé está cada cliente.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUÇÕES -->
+  <section class="block solutions">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2>Tecnologia que ajuda.<br /><strong>Tempo para o que importa.</strong></h2>
+        </div>
+        <p class="lead">Produtos prontos para o atendimento e projetos sob medida para o resto da operação.</p>
+      </div>
+      <div class="bento">
+        <div class="card chat-card">
+          <span class="product-badge"><svg><use href="#spx" /></svg>Chat SPX</span>
+          <h3>Atendimento com IA, <strong>a qualquer hora.</strong></h3>
+          <p class="desc">Responde no WhatsApp, Instagram e site, qualifica o lead e entrega para o corretor certo, com todo o histórico no seu CRM.</p>
+          <div class="inbox">
+            <div class="inbox-top">Caixa de entrada <span class="pill-green">IA ativa</span></div>
+            <div class="channels"><span class="on">WhatsApp</span><span>Instagram</span><span>Site</span><span>E-mail</span></div>
+            <div class="thread">
+              <div class="who">Carla Oliveira · 23:04</div>
+              <div class="bubble">Oi! Ainda tem unidade de 3 quartos?</div>
+              <div class="bubble ai">Oi, Carla! Temos, sim. Você pensa em financiamento ou à vista?</div>
+              <div class="bubble">Financiamento. Queria visitar no sábado.</div>
+              <div class="tags"><span>3 quartos</span><span>Financiamento</span><span>Visita no sábado</span></div>
+              <div class="handoff">
+                <span class="avatar">JM</span>
+                <div><b>Encaminhado para Juliana Martins</b><span>Corretora · com todo o histórico</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <span class="product-badge"><svg><use href="#spx" /></svg>VoxIA</span>
+          <h3>A IA que <strong>liga e atende.</strong></h3>
+          <p class="desc">Retorna o contato na hora, conversa por voz e agenda a visita.</p>
+          <div class="call">
+            <div class="call-top"><span class="avatar" style="background:var(--primary)">CO</span><div><b>Carla Oliveira</b><span>Em chamada</span></div><span class="time">00:06</span></div>
+            <div class="wave">
+              <i style="height:30%"></i><i style="height:55%"></i><i style="height:80%"></i><i style="height:45%"></i><i style="height:95%"></i><i style="height:60%"></i><i style="height:35%"></i><i style="height:70%"></i><i style="height:88%"></i><i style="height:50%"></i><i style="height:25%"></i><i style="height:65%"></i><i style="height:90%"></i><i style="height:40%"></i><i style="height:72%"></i><i style="height:30%"></i><i style="height:58%"></i><i style="height:84%"></i><i style="height:46%"></i><i style="height:22%"></i>
+            </div>
+            <div class="checklist">
+              <div><span class="check-circle"><svg><use href="#check" /></svg></span>Atende a qualquer hora</div>
+              <div><span class="check-circle"><svg><use href="#check" /></svg></span>Lead qualificado: 3 quartos</div>
+              <div><span class="check-circle"><svg><use href="#check" /></svg></span>Visita agendada: sábado, 10h</div>
+            </div>
+          </div>
+        </div>
+        <div class="small-cards">
+          <div class="card">
+            <div class="sc-head"><span class="icon-box"><svg class="icon" viewBox="0 0 24 24"><rect width="8" height="8" x="3" y="3" rx="2" /><path d="M7 11v4a2 2 0 0 0 2 2h4" /><rect width="8" height="8" x="13" y="13" rx="2" /></svg></span><h3>Automações sob medida</h3></div>
+            <p>Cadastros, follow-up e relatórios que rodam sozinhos.</p>
+          </div>
+          <div class="card">
+            <div class="sc-head"><span class="icon-box"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" /></svg></span><h3>Consultoria em IA</h3></div>
+            <p>Mostramos onde a IA dá retorno antes de você investir.</p>
+          </div>
+        </div>
+      </div>
+      <p class="also"><b>Também fazemos:</b> desenvolvimento de sistemas · mentoria e treinamento · assessoria contínua</p>
+    </div>
+  </section>
+
+  <!-- COMO FUNCIONA -->
+  <section class="block">
+    <div class="wrap two-col" style="align-items:start">
+      <div>
+        <h2>Do diagnóstico ao <strong>resultado.</strong></h2>
+        <p class="lead" style="margin-top:18px">Processo claro, sem surpresa. Você acompanha cada etapa.</p>
+        <img class="how-art" src="../../../public/images/ilustracoes/mascotes-dupla.svg" alt="" />
+      </div>
+      <div style="padding-top:12px">
+        <div class="step"><span class="num">1</span><div><h3>Diagnóstico</h3><p>Conversamos sobre a sua rotina e encontramos onde a IA economiza mais tempo e dinheiro.</p></div></div>
+        <div class="step"><span class="num">2</span><div><h3>Estratégia</h3><p>Um plano simples: o que fazer primeiro, com quais ferramentas e quanto custa.</p></div></div>
+        <div class="step"><span class="num">3</span><div><h3>Execução</h3><p>Colocamos para funcionar, integrado ao que você já usa, com testes e documentação.</p></div></div>
+        <div class="step"><span class="num">4</span><div><h3>Evolução</h3><p>Acompanhamos os resultados e ajustamos para o ganho continuar crescendo.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTADOS -->
+  <section class="block results">
+    <div class="wrap">
+      <div class="cases-head" style="margin-top:0"><h3>Projetos <strong>em produção.</strong></h3><a class="btn btn-outline">Ver todos <svg><use href="#arrow" /></svg></a></div>
+      <div class="cases">
+        <div class="case"><span class="sector">Atendimento</span><h4>Agentes de IA no WhatsApp</h4><p>Atendem, qualificam e encaminham clientes 24 horas por dia.</p><div class="metric"><span>Atendimento a qualquer hora · encaminhamento para a pessoa certa</span></div></div>
+        <div class="case"><span class="sector">Assistência técnica</span><h4>Sistema de Ordens de Serviço</h4><p>OS, financeiro, estoque e clientes num só lugar.</p><div class="metric"><span>OS, estoque e financeiro integrados</span></div></div>
+        <div class="case"><span class="sector">Prospecção B2B</span><h4>Captador Inteligente</h4><p>Encontra, qualifica e organiza leads, integrado ao WhatsApp e ao CRM.</p><div class="metric"><span>Qualificação por IA · integração com WhatsApp e CRM</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA AZUL -->
+  <section class="cta">
+    <svg class="watermark" viewBox="0 0 130 120"><use href="#spx" /></svg>
+    <div class="wrap cta-grid">
+      <div>
+        <h2>A tecnologia trabalha.<br /><strong>O tempo é seu.</strong></h2>
+        <p class="lead">Agende um diagnóstico gratuito de 30 minutos. Mostramos onde a IA economiza tempo na sua empresa, sem compromisso.</p>
+        <div class="cta-ctas">
+          <a class="btn btn-white">Agendar diagnóstico gratuito <svg><use href="#arrow" /></svg></a>
+          <a class="btn btn-ghost-white">Falar por e-mail</a>
+        </div>
+      </div>
+      <div class="booking">
+        <svg class="cta-star"><use href="#star" /></svg>
+        <div class="b-top">
+          <span class="icon-box"><svg class="icon" viewBox="0 0 24 24"><path d="M8 2v4" /><path d="M16 2v4" /><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" /><path d="m9 16 2 2 4-4" /></svg></span>
+          <div><b>Diagnóstico gratuito</b><span>30 minutos · online ou presencial</span></div>
+        </div>
+        <div class="days">
+          <div>SEG<b>13</b></div><div>TER<b>14</b></div><div class="on">QUA<b>15</b></div><div>QUI<b>16</b></div><div>SEX<b>17</b></div>
+        </div>
+        <div class="slots"><span>09:00</span><span class="on">10:30</span><span>14:00</span><span>15:30</span><span>16:00</span><span>17:30</span></div>
+        <a class="btn btn-primary">Confirmar horário</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="block">
+    <div class="wrap faq-grid">
+      <div>
+        <h2>Perguntas <strong>frequentes.</strong></h2>
+        <div class="contact-card">
+          <span class="icon-box"><svg class="icon" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg></span>
+          <div><b>Ainda ficou com dúvida?</b><span>contato@simplexsolucoes.com.br</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="faq-item open">
+          <div class="faq-q">Como funciona o diagnóstico gratuito de 30 minutos? <span class="tog"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14" /></svg></span></div>
+          <p class="faq-a">Numa conversa de 30 minutos, entendemos a sua rotina, mostramos onde a IA economiza tempo e indicamos por onde começar. Sem compromisso.</p>
+        </div>
+        <div class="faq-item"><div class="faq-q">Qual o prazo típico de um projeto? <span class="tog"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="M12 5v14" /></svg></span></div></div>
+        <div class="faq-item"><div class="faq-q">Preciso ter equipe técnica? <span class="tog"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="M12 5v14" /></svg></span></div></div>
+        <div class="faq-item"><div class="faq-q">Como ficam a segurança e a LGPD dos meus dados? <span class="tog"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="M12 5v14" /></svg></span></div></div>
+        <div class="faq-item"><div class="faq-q">Funciona para o meu setor? <span class="tog"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="M12 5v14" /></svg></span></div></div>
+        <div class="faq-item"><div class="faq-q">E depois da entrega, tem suporte? <span class="tog"><svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="M12 5v14" /></svg></span></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <img src="../../../public/brand/spxia-horizontal-branca.svg" alt="SPXia" style="height:30px" />
+        <p>IA e automação para simplificar a rotina de quem empreende. SPX vem de Simplex.</p>
+        <p style="margin-top:12px">Sinop · Mato Grosso</p>
+      </div>
+      <div><h2>Navegação</h2><ul><li>Soluções</li><li>Como funciona</li><li>Resultados</li><li>Dúvidas</li></ul></div>
+      <div><h2>Soluções</h2><ul><li>Chat SPX</li><li>VoxIA</li><li>Automações</li><li>Consultoria em IA</li></ul></div>
+      <div><h2>Contato</h2><ul><li>contato@simplexsolucoes.com.br</li><li>Agendar diagnóstico</li><li>Área do cliente</li></ul></div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 SPXia · SPX Inteligência e Desenvolvimento LTDA · CNPJ 68.387.997/0001-18</span>
+      <span>Privacidade · Termos</span>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

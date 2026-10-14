@@ -1,70 +1,52 @@
 "use client"
 
-import dynamic from "next/dynamic"
+import Image from "next/image"
+import { motion } from "motion/react"
 
-import { TextReveal } from "@/components/ui/text-reveal"
+import { useReveal } from "@/components/ui/motion-kit"
 import { useI18n } from "@/lib/i18n/context"
 
-// Dois canvas decorativos (aria-hidden) numa seção no fim da página: ficam
-// fora do bundle inicial e do HTML do servidor.
-const ShootingStars = dynamic(
-  () => import("@/components/ui/shooting-stars").then((m) => m.ShootingStars),
-  { ssr: false },
-)
-const StarsBackground = dynamic(
-  () => import("@/components/ui/stars-background").then((m) => m.StarsBackground),
-  { ssr: false },
-)
-
-// Textos copiados de legacy/src/i18n/{pt,en}.js (seção quote).
+// Decisão P3 do PLANO: a frase da marca (arte da camiseta), sem assinatura.
 const copy = {
-  pt: {
-    text: "IA não é sobre tecnologia. É sobre",
-    textEm: "resultado de negócio.",
-    text2: "Se não gera receita, reduz custo ou libera tempo, não vale o investimento.",
-    author: "Paulo Seze, SPXIA",
-  },
-  en: {
-    text: "AI isn't about technology. It's about",
-    textEm: "business results.",
-    text2: "If it doesn't generate revenue, reduce cost or free up time, it's not worth the investment.",
-    author: "Paulo Seze, SPXIA",
-  },
+  pt: { text: "A tecnologia trabalha.", textEm: "O tempo é seu." },
+  en: { text: "Technology does the work.", textEm: "The time is yours." },
 } as const
 
 export function Quote() {
   const { locale } = useI18n()
   const t = copy[locale]
+  const reveal = useReveal()
 
   return (
-    // Sem overflow-hidden aqui: o TextReveal depende de position:sticky e um
-    // ancestral com overflow recortado quebraria o efeito.
-    <section className="relative isolate bg-card">
-      {/* Céu da seção: o container acompanha os 200vh do TextReveal, mas o canvas
-          fica preso ao viewport (sticky) e a máscara abre um vazio no centro para
-          o texto não competir com as estrelas. */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <div className="sticky top-0 h-screen w-full mask-[radial-gradient(ellipse_58%_46%_at_center,transparent_25%,black_78%)]">
-          <StarsBackground starDensity={0.00011} />
-          <ShootingStars starColor="#f90108" trailRgb="254, 254, 254" />
-        </div>
-      </div>
+    <section className="relative overflow-hidden bg-surface">
+      <div className="mx-auto grid w-full max-w-7xl items-center gap-10 px-4 py-24 md:px-8 md:py-28 lg:grid-cols-[1fr_1.15fr] lg:px-10">
+        <motion.h2
+          className="text-balance text-5xl leading-[1.04] tracking-tight text-foreground sm:text-6xl lg:text-7xl"
+          {...reveal()}
+        >
+          {t.text} <strong className="block font-bold text-primary">{t.textEm}</strong>
+        </motion.h2>
 
-      <TextReveal
-        className="z-10"
-        textClassName="font-serif"
-        footer={
-          <p className="mt-6 pl-5 font-mono text-sm text-muted-foreground md:pl-8 lg:pl-10">
-            {t.author}
-          </p>
-        }
-      >
-        {[
-          { text: t.text },
-          { text: t.textEm, className: "text-primary" },
-          { text: t.text2 },
-        ]}
-      </TextReveal>
+        {/* REFERENCIAS.md: os mascotes entram depois do texto. */}
+        <motion.div className="relative" {...reveal(0.25)}>
+          {/* Forma do símbolo atrás dos mascotes; a seção corta o que passa da borda. */}
+          <Image
+            src="/images/formas/simbolo-verde.svg"
+            alt=""
+            width={734}
+            height={691}
+            className="pointer-events-none absolute -right-[22%] top-1/2 w-[105%] max-w-none -translate-y-1/2"
+          />
+          <Image
+            src="/images/ilustracoes/mascotes-dupla.svg"
+            alt=""
+            width={896}
+            height={677}
+            sizes="(min-width: 1024px) 50vw, 92vw"
+            className="relative h-auto w-full"
+          />
+        </motion.div>
+      </div>
     </section>
   )
 }

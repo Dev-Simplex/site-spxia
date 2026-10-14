@@ -1,41 +1,45 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* Tema único dark da marca SPXIA — preto #1A1A1A, vermelho #F90108, branco #FEFEFE */
+/* Tema claro da marca SPXia (manual de 05/10/2026): Azul Pulso #001FDA,
+   Verde Pulso #1EC737, Azul Profundo #07174F, Azul Horizonte #57B1D8, branco.
+   Contrastes sobre branco: foreground 16,9:1, primary 9,5:1, muted 7,3:1.
+   O verde dá 2,3:1 sobre branco: só fundo, forma ou ícone, nunca texto, e
+   rótulo sobre verde é Azul Profundo (7,5:1), nunca branco. */
 :root {
-  --background: #1a1a1a;
-  --foreground: #fefefe;
-  --card: #212121;
-  --card-foreground: #fefefe;
-  --popover: #212121;
-  --popover-foreground: #fefefe;
-  --primary: #f90108;
-  --primary-foreground: #fefefe;
-  /* Texto vermelho pequeno (kickers, labels, links): #f90108 dá 4.17:1 sobre
-     #1a1a1a e 3.86:1 sobre #212121 — abaixo do AA (4.5:1). Este tom mais claro
-     dá 5.26:1 / 4.87:1. Títulos grandes e superfícies continuam em --primary. */
-  --primary-text: #ff4a4f;
-  /* Fundo de botão com rótulo branco pequeno: #f90108 dá 4.13–4.17:1 com
-     #fefefe; este tom dá 4.80:1 mantendo o vermelho da marca. */
-  --primary-btn: #e60107;
-  --secondary: #2d2d2d;
-  --secondary-foreground: #fefefe;
-  --muted: #2d2d2d;
-  --muted-foreground: #888888;
-  --accent: #2d2d2d;
-  --accent-foreground: #fefefe;
-  --destructive: #f90108;
-  --destructive-foreground: #fefefe;
-  --border: #3d3d3d;
-  --input: #3d3d3d;
-  --ring: #f90108;
-  --radius: 0.625rem;
+  --background: #ffffff;
+  --foreground: #07174f;
+  --card: #ffffff;
+  --card-foreground: #07174f;
+  --popover: #ffffff;
+  --popover-foreground: #07174f;
+  --primary: #001fda;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f6fd;
+  --secondary-foreground: #07174f;
+  --muted: #f4f6fd;
+  --muted-foreground: #4a5578;
+  --accent: #eef1ff;
+  --accent-foreground: #001fda;
+  --destructive: #b42318;
+  --destructive-foreground: #ffffff;
+  --border: #e2e6f3;
+  --input: #d5dbf0;
+  --ring: #001fda;
+  --radius: 0.875rem;
+  /* Cores da marca fora do esquema shadcn */
+  --surface: #f4f6fd;
+  --brand-green: #1ec737;
+  --brand-deep: #07174f;
+  --brand-sky: #57b1d8;
 }
 
 @theme inline {
   --font-sans: var(--font-inter);
-  --font-mono: var(--font-jetbrains-mono);
-  --font-serif: var(--font-dm-serif);
+  --color-surface: var(--surface);
+  --color-brand-green: var(--brand-green);
+  --color-brand-deep: var(--brand-deep);
+  --color-brand-sky: var(--brand-sky);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -44,8 +48,6 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-primary-text: var(--primary-text);
-  --color-primary-btn: var(--primary-btn);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -87,22 +89,5 @@
   button:disabled,
   [aria-disabled='true'] {
     cursor: not-allowed;
-  }
-}
-
-/* MagicUI shine-border (components/ui/shine-border.tsx) */
-@theme inline {
-  --animate-shine: shine var(--duration) infinite linear;
-
-  @keyframes shine {
-    0% {
-      background-position: 0% 0%;
-    }
-    50% {
-      background-position: 100% 100%;
-    }
-    to {
-      background-position: 0% 0%;
-    }
   }
 }

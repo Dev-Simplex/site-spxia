@@ -4,13 +4,17 @@ const en: Dictionary = {
   lang: 'en',
 
   nav: {
-    sobre: 'ABOUT',
-    servicos: 'SERVICES',
-    comoFunciona: 'HOW IT WORKS',
-    cases: 'CASES',
-    mentoria: 'TRAINING',
-    cta: 'CONTACT US',
-    diagnostico: 'BOOK A DIAGNOSIS',
+    sobre: 'About',
+    servicos: 'Solutions',
+    comoFunciona: 'How it works',
+    cases: 'Projects',
+    mentoria: 'Training',
+    cta: 'Contact',
+    diagnostico: "Let's talk",
+    entrar: 'Sign in',
+    inicio: 'SPXia, home page',
+    abrirMenu: 'Open menu',
+    fecharMenu: 'Close menu',
   },
 
   hero: {
@@ -149,20 +153,6 @@ const en: Dictionary = {
     ],
   },
 
-  resultados: {
-    number: '05',
-    label: 'RESULTS',
-    title: 'Numbers that',
-    titleEm: 'matter.',
-    desc: 'Real metrics from projects delivered to our clients.',
-    items: [
-      { value: '50+', label: 'PROJECTS DELIVERED', desc: 'Systems, automations and integrations in production' },
-      { value: '40+', label: 'ACTIVE AUTOMATIONS', desc: 'Workflows running 24/7 with monitoring' },
-      { value: '3x', label: 'AVERAGE ROI', desc: 'Return on investment in the first 6 months' },
-      { value: '80%', label: 'TIME REDUCTION', desc: 'In manual processes replaced by automation' },
-    ],
-  },
-
   mentoria: {
     number: '06',
     label: 'MENTORING & TRAINING',
@@ -191,24 +181,35 @@ const en: Dictionary = {
     ],
   },
 
-  quote: {
-    text: "AI isn't about technology. It's about",
-    textEm: 'business results.',
-    text2: "If it doesn't generate revenue, reduce cost or free up time, it's not worth the investment.",
-    author: 'Paulo Seze, SPXIA',
-  },
-
   contato: {
-    title: "Let's transform your business with",
-    titleEm: 'real AI?',
-    desc: 'Book a free diagnosis. In 30 minutes we map where AI generates the most impact in your company.',
-    cta: 'Book Free Diagnosis',
+    title: 'What could be',
+    titleEm: 'simpler at your company?',
+    desc: "Book a free diagnosis. In 30 minutes, we'll show you where AI can help your routine first.",
+    cta: 'Book a free diagnosis',
+    emailCta: 'Email us',
     email: 'contato@simplexsolucoes.com.br',
-    location: 'Mato Grosso, Brazil',
+    location: 'Sinop · Mato Grosso, Brazil',
+    booking: {
+      title: 'Free diagnosis',
+      meta: '30 minutes · online or in person',
+      days: ['MON', 'TUE', 'WED', 'THU', 'FRI'],
+      confirm: 'Confirm time',
+    },
   },
 
   footer: {
-    copy: 'SPXIA © 2026 · Consulting, Automation & AI for Business',
+    copy: '© 2026 SPXia',
+    tagline: 'AI and automation that make running a business simpler. SPX comes from Simplex.',
+    navigation: 'Navigation',
+    solutions: 'Solutions',
+    solutionItems: ['Chat SPX', 'VoxIA', 'Automations', 'AI consulting'],
+    contact: 'Contact',
+    faq: 'Questions',
+    schedule: 'Book a diagnosis',
+    clientArea: 'Client area',
+    legal: 'Legal',
+    privacy: 'Privacy',
+    terms: 'Terms',
   },
 }
 

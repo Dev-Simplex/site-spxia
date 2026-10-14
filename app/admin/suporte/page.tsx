@@ -16,7 +16,7 @@ const prioColors: Record<string, string> = {
   baixa: "#4ade80",
   normal: "#60a5fa",
   alta: "#fbbf24",
-  urgente: "#F90108",
+  urgente: "var(--danger)",
 }
 const statusLabels: Record<string, string> = {
   aberto: "Aberto",

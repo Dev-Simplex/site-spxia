@@ -2,13 +2,17 @@ const pt = {
   lang: 'pt-BR',
 
   nav: {
-    sobre: 'SOBRE',
-    servicos: 'SERVIÇOS',
-    comoFunciona: 'COMO FUNCIONA',
-    cases: 'CASES',
-    mentoria: 'MENTORIA',
-    cta: 'FALE CONOSCO',
-    diagnostico: 'AGENDAR DIAGNÓSTICO',
+    sobre: 'Sobre',
+    servicos: 'Soluções',
+    comoFunciona: 'Como funciona',
+    cases: 'Projetos',
+    mentoria: 'Treinamento',
+    cta: 'Contato',
+    diagnostico: 'Vamos conversar',
+    entrar: 'Entrar',
+    inicio: 'SPXia, página inicial',
+    abrirMenu: 'Abrir menu',
+    fecharMenu: 'Fechar menu',
   },
 
   hero: {
@@ -147,20 +151,6 @@ const pt = {
     ],
   },
 
-  resultados: {
-    number: '05',
-    label: 'RESULTADOS',
-    title: 'Números que',
-    titleEm: 'importam.',
-    desc: 'Métricas reais de projetos entregues para nossos clientes.',
-    items: [
-      { value: '50+', label: 'PROJETOS ENTREGUES', desc: 'Sistemas, automações e integrações em produção' },
-      { value: '40+', label: 'AUTOMAÇÕES ATIVAS', desc: 'Workflows rodando 24/7 com monitoramento' },
-      { value: '3x', label: 'ROI MÉDIO', desc: 'Retorno sobre investimento nos primeiros 6 meses' },
-      { value: '80%', label: 'REDUÇÃO DE TEMPO', desc: 'Em processos manuais substituídos por automação' },
-    ],
-  },
-
   mentoria: {
     number: '06',
     label: 'MENTORIA E TREINAMENTO',
@@ -189,24 +179,35 @@ const pt = {
     ],
   },
 
-  quote: {
-    text: 'IA não é sobre tecnologia. É sobre',
-    textEm: 'resultado de negócio.',
-    text2: 'Se não gera receita, reduz custo ou libera tempo, não vale o investimento.',
-    author: 'Paulo Seze, SPXIA',
-  },
-
   contato: {
-    title: 'Vamos transformar seu negócio com',
-    titleEm: 'IA de verdade?',
-    desc: 'Agende um diagnóstico gratuito. Em 30 minutos mapeamos onde IA gera mais impacto na sua empresa.',
-    cta: 'Agendar Diagnóstico Gratuito',
+    title: 'O que pode ficar',
+    titleEm: 'mais simples na sua empresa?',
+    desc: 'Agende um diagnóstico gratuito. Em 30 minutos, mostramos onde a IA ajuda primeiro na sua rotina.',
+    cta: 'Agendar diagnóstico gratuito',
+    emailCta: 'Falar por e-mail',
     email: 'contato@simplexsolucoes.com.br',
-    location: 'Mato Grosso, Brasil',
+    location: 'Sinop · Mato Grosso',
+    booking: {
+      title: 'Diagnóstico gratuito',
+      meta: '30 minutos · online ou presencial',
+      days: ['SEG', 'TER', 'QUA', 'QUI', 'SEX'],
+      confirm: 'Confirmar horário',
+    },
   },
 
   footer: {
-    copy: 'SPXIA © 2026 · Consultoria, Automação e IA para Negócios',
+    copy: '© 2026 SPXia',
+    tagline: 'IA e automação para simplificar a rotina de quem empreende. SPX vem de Simplex.',
+    navigation: 'Navegação',
+    solutions: 'Soluções',
+    solutionItems: ['Chat SPX', 'VoxIA', 'Automações', 'Consultoria em IA'],
+    contact: 'Contato',
+    faq: 'Dúvidas',
+    schedule: 'Agendar diagnóstico',
+    clientArea: 'Área do cliente',
+    legal: 'Legal',
+    privacy: 'Privacidade',
+    terms: 'Termos',
   },
 }
 

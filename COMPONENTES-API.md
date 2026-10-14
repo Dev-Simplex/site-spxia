@@ -137,7 +137,9 @@ adotar inteiros.
 
 Todos devolvem o mesmo formato de JSON (`$schema: ui.shadcn.com/schema/registry-item.json`), com o código
 dentro do campo `files[].content`. Mesmo sem React no projeto, **o CSS e a estrutura dentro do TSX são
-aproveitáveis** — foi assim que este projeto usou o cult-ui e o Magic UI.
+aproveitáveis**. O site antigo usou assim efeitos do cult-ui e do Magic UI (border-beam, texture-card, sparkles
+e afins); o rebrand de 2026-10 removeu todos de `components/ui/`, então os exemplos abaixo valem só como
+formato de URL.
 
 ```bash
 curl -s https://ui.shadcn.com/r/styles/new-york/button.json

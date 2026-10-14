@@ -1,7 +1,13 @@
 "use client"
 
+import { reveal } from "@/components/ui/motion-kit"
 import { useEffect, useState, type FormEvent } from "react"
 import Link from "next/link"
+import Image from "next/image"
+import { motion, useReducedMotion } from "motion/react"
+import { Button } from "@/components/ui/button"
+import { LanguageSwitcher } from "@/components/language-switcher"
+import { useI18n } from "@/lib/i18n/context"
 import { useParams } from "next/navigation"
 import { AlertCircle, Check, Copy, CreditCard, FileText, Loader2, SearchX, Zap } from "lucide-react"
 
@@ -48,11 +54,9 @@ interface CheckoutResult {
 type Step = "form" | "processing" | "success" | "error"
 type BillingType = "PIX" | "BOLETO" | "CREDIT_CARD"
 
-const cycleLabels: Record<string, string> = {
-  MONTHLY: "/mês",
-  QUARTERLY: "/trim",
-  SEMIANNUALLY: "/sem",
-  YEARLY: "/ano",
+const cycleLabels: Record<"pt" | "en", Record<string, string>> = {
+  pt: { MONTHLY: "/mês", QUARTERLY: "/trimestre", SEMIANNUALLY: "/semestre", YEARLY: "/ano" },
+  en: { MONTHLY: "/month", QUARTERLY: "/quarter", SEMIANNUALLY: "/6 months", YEARLY: "/year" },
 }
 
 const billingOptions: { value: BillingType; label: string; Icon: typeof Zap }[] = [
@@ -62,9 +66,91 @@ const billingOptions: { value: BillingType; label: string; Icon: typeof Zap }[] 
 ]
 
 const fieldClass =
-  "w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/25"
+  "w-full min-w-0 rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/25"
+
+const copy = {
+  "pt": {
+    "loading": "Carregando…",
+    "notFound": "Produto não encontrado",
+    "notFoundDesc": "Este link não leva a nenhum produto disponível.",
+    "talk": "Vamos conversar",
+    "home": "Voltar ao início",
+    "summary": "Resumo do pedido",
+    "or": "ou",
+    "installments": "x de",
+    "details": "Dados para pagamento",
+    "detailsDesc": "Preencha seus dados para gerar a cobrança.",
+    "name": "Nome completo",
+    "namePlaceholder": "Seu nome",
+    "email": "E-mail",
+    "emailPlaceholder": "seu@email.com",
+    "taxId": "CPF ou CNPJ",
+    "method": "Forma de pagamento",
+    "subscribe": "Assinar",
+    "pay": "Pagar",
+    "secure": "Pagamento seguro, processado pela Asaas",
+    "processing": "Processando pagamento…",
+    "processingDesc": "Só um instante, estamos gerando sua cobrança.",
+    "created": "Cobrança gerada!",
+    "qr": "QR Code do Pix",
+    "pix": "Pix copia e cola",
+    "copy": "Copiar",
+    "copied": "Copiado!",
+    "copyHint": "Clique para copiar",
+    "bankSlip": "Abrir boleto",
+    "invoice": "Ver fatura",
+    "access": "Assim que o pagamento for confirmado, seu acesso é liberado automaticamente.",
+    "useEmail": "Use o e-mail",
+    "signIn": "para entrar na plataforma.",
+    "platform": "Acessar plataforma",
+    "error": "O pagamento não foi concluído",
+    "errorDefault": "Não conseguimos processar o pagamento. Tente de novo.",
+    "retry": "Tentar novamente"
+  },
+  "en": {
+    "loading": "Loading…",
+    "notFound": "Product not found",
+    "notFoundDesc": "This link doesn’t lead to an available product.",
+    "talk": "Let’s talk",
+    "home": "Back to home",
+    "summary": "Order summary",
+    "or": "or",
+    "installments": "installments of",
+    "details": "Payment details",
+    "detailsDesc": "Fill in your details to generate the charge.",
+    "name": "Full name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "you@email.com",
+    "taxId": "CPF or CNPJ (Brazilian tax ID)",
+    "method": "Payment method",
+    "subscribe": "Subscribe",
+    "pay": "Pay",
+    "secure": "Secure payment processed by Asaas",
+    "processing": "Processing payment…",
+    "processingDesc": "One moment, we’re generating your charge.",
+    "created": "Charge created!",
+    "qr": "Pix QR code",
+    "pix": "Pix copy-and-paste code",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "copyHint": "Click to copy",
+    "bankSlip": "Open bank slip",
+    "invoice": "View invoice",
+    "access": "As soon as payment is confirmed, your access is unlocked automatically.",
+    "useEmail": "Use",
+    "signIn": "to sign in to the platform.",
+    "platform": "Go to platform",
+    "error": "Payment not completed",
+    "errorDefault": "We couldn’t process the payment. Please try again.",
+    "retry": "Try again"
+  }
+}
 
 export default function CheckoutPage() {
+  const { locale } = useI18n()
+  const c = copy[locale]
+  const reduceMotion = useReducedMotion()
   const params = useParams<{ slug: string }>()
   const slug = params?.slug
 
@@ -125,12 +211,12 @@ export default function CheckoutPage() {
 
       if (error) throw new Error(error.message)
       const result = data as CheckoutResult | null
-      if (result?.error) throw new Error(result.message || "Erro ao processar pagamento")
+      if (result?.error) throw new Error(result.message || c.errorDefault)
 
       setPaymentData(result)
       setStep("success")
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Erro ao processar pagamento")
+      setErrorMsg(err instanceof Error ? err.message : c.errorDefault)
       setStep("error")
     }
   }
@@ -147,10 +233,11 @@ export default function CheckoutPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-background">
+      <main className="flex min-h-screen flex-col items-center justify-center gap-8 bg-background px-5">
+        <Link href="/" aria-label={c.home}><Logo height={30} /></Link>
         <div className="flex items-center gap-3 text-muted-foreground">
-          <Loader2 className="h-5 w-5 animate-spin text-primary" aria-hidden />
-          Carregando...
+          <Loader2 className="h-5 w-5 animate-spin motion-reduce:animate-none text-primary" aria-hidden />
+          {c.loading}
         </div>
       </main>
     )
@@ -158,30 +245,32 @@ export default function CheckoutPage() {
 
   if (!product) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-background px-4">
-        <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 text-center sm:p-10">
+      <main className="min-h-screen bg-background px-5 py-6">
+        <header className="mx-auto flex max-w-6xl items-center justify-between gap-4"><Link href="/" aria-label={c.home}><Logo height={30} /></Link><LanguageSwitcher /></header>
+        <div className="flex min-h-[calc(100vh-100px)] items-center justify-center py-10">
+        <motion.div {...reveal()} initial={reduceMotion ? false : { opacity: 0, y: 16 }} className="motion-reduce:!opacity-100 motion-reduce:!transform-none w-full max-w-lg rounded-[2rem] border border-border bg-surface p-8 text-center sm:p-12">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/15">
-            <SearchX className="h-7 w-7 text-primary-text" aria-hidden />
+            <SearchX className="h-7 w-7 text-primary" aria-hidden />
           </div>
-          <h1 className="mt-5 font-serif text-2xl text-foreground">Produto não encontrado</h1>
+          <h1 className="mt-5 text-2xl text-foreground">{c.notFound}</h1>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            O link que você acessou não corresponde a nenhum produto disponível. Ele pode ter
-            saído do ar ou o endereço foi digitado errado.
+            {c.notFoundDesc}
           </p>
           <div className="mt-7 flex flex-col gap-3">
-            <Link
+            <Button asChild><Link
               href="/diagnostico"
-              className="inline-flex w-full items-center justify-center rounded-lg bg-primary-btn px-5 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-btn/90"
+              className="h-12 w-full"
             >
-              Agendar Diagnóstico
-            </Link>
-            <Link
+              {c.talk}
+            </Link></Button>
+            <Button variant="outline" asChild><Link
               href="/"
-              className="inline-flex w-full items-center justify-center rounded-lg border border-border bg-secondary px-5 py-3 text-sm font-semibold text-secondary-foreground transition-colors hover:bg-secondary/80"
+              className="h-12 w-full"
             >
-              Voltar para a home
-            </Link>
+              {c.home}
+            </Link></Button>
           </div>
+        </motion.div>
         </div>
       </main>
     )
@@ -190,34 +279,35 @@ export default function CheckoutPage() {
   const price = Number(product.price)
   const cycleSuffix =
     product.type === "subscription" && product.billing_cycle
-      ? cycleLabels[product.billing_cycle] ?? ""
+      ? cycleLabels[locale][product.billing_cycle] ?? ""
       : ""
 
   return (
     <main className="min-h-screen bg-background px-4 py-10 md:py-16">
       <div className="mx-auto w-full max-w-5xl">
-        <Link href="/" className="mb-8 inline-flex" aria-label="Voltar para a home">
-          <Logo />
-        </Link>
+        <header className="mb-8 flex items-center justify-between gap-4"><Link href="/" aria-label={c.home}>
+          <Logo height={30} />
+        </Link><LanguageSwitcher /></header>
 
-        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-2xl shadow-black/40 md:grid md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+        <div className="overflow-hidden rounded-[2rem] border border-border bg-background md:grid md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
           {/* Resumo do produto */}
-          <aside className="border-b border-border bg-secondary/40 p-6 sm:p-8 md:border-b-0 md:border-r">
-            <span className="font-mono text-[0.625rem] font-medium uppercase tracking-[0.1em] text-primary-text">
-              {product.category || "Resumo do pedido"}
+          <aside className="border-b border-border bg-surface p-6 sm:p-8 md:border-b-0 md:border-r">
+            <span className="inline-block rounded-full bg-accent px-3 py-1 text-xs font-medium text-primary">
+              {product.category || c.summary}
             </span>
 
             {product.thumbnail_url && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <div className="relative mt-4 h-40 overflow-hidden rounded-xl"><Image
                 src={product.thumbnail_url}
                 alt={product.title}
-                loading="lazy"
-                className="mt-4 h-40 w-full rounded-xl object-cover"
-              />
+                fill
+                sizes="(min-width: 768px) 420px, 90vw"
+                unoptimized
+                className="object-cover"
+              /></div>
             )}
 
-            <h1 className="mt-4 font-serif text-2xl leading-tight text-foreground">
+            <h1 className="mt-4 text-2xl leading-tight text-foreground">
               {product.title}
             </h1>
             {product.description && (
@@ -230,7 +320,7 @@ export default function CheckoutPage() {
               <ul className="mt-5 flex flex-col gap-2">
                 {product.features.map((feature, i) => (
                   <li key={i} className="flex items-start gap-2 text-[0.8125rem] text-foreground/90">
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-green-400" aria-hidden />
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
                     {feature}
                   </li>
                 ))}
@@ -243,7 +333,7 @@ export default function CheckoutPage() {
                   R$ {Number(product.original_price).toFixed(2)}
                 </span>
               )}
-              <span className="font-serif text-3xl leading-tight text-foreground">
+              <span className="text-3xl leading-tight text-foreground">
                 R$ {price.toFixed(2)}
                 {cycleSuffix && (
                   <span className="font-sans text-sm text-muted-foreground">{cycleSuffix}</span>
@@ -251,7 +341,7 @@ export default function CheckoutPage() {
               </span>
               {product.type === "one_time" && (product.max_installments ?? 0) > 1 && (
                 <span className="mt-1 block text-xs text-muted-foreground">
-                  ou {product.max_installments}x R${" "}
+                  {c.or} {product.max_installments}x R${" "}
                   {(price / Number(product.max_installments)).toFixed(2)}
                 </span>
               )}
@@ -262,15 +352,15 @@ export default function CheckoutPage() {
           <section className="p-6 sm:p-8">
             {step === "form" && (
               <>
-                <h2 className="font-serif text-2xl text-foreground">Dados para pagamento</h2>
+                <h2 className="text-2xl text-foreground">{c.details}</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Preencha seus dados para gerar a cobrança.
+                  {c.detailsDesc}
                 </p>
 
                 <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
                   <div className="flex flex-col gap-1.5">
                     <label htmlFor="name" className="text-xs font-medium text-muted-foreground">
-                      Nome completo *
+                      {c.name} *
                     </label>
                     <input
                       id="name"
@@ -278,14 +368,14 @@ export default function CheckoutPage() {
                       onChange={(e) => setName(e.target.value)}
                       required
                       autoComplete="name"
-                      placeholder="Seu nome"
+                      placeholder={c.namePlaceholder}
                       className={fieldClass}
                     />
                   </div>
 
                   <div className="flex flex-col gap-1.5">
                     <label htmlFor="email" className="text-xs font-medium text-muted-foreground">
-                      E-mail *
+                      {c.email} *
                     </label>
                     <input
                       id="email"
@@ -294,14 +384,14 @@ export default function CheckoutPage() {
                       onChange={(e) => setEmail(e.target.value)}
                       required
                       autoComplete="email"
-                      placeholder="seu@email.com"
+                      placeholder={c.emailPlaceholder}
                       className={fieldClass}
                     />
                   </div>
 
                   <div className="flex flex-col gap-1.5">
                     <label htmlFor="cpfCnpj" className="text-xs font-medium text-muted-foreground">
-                      CPF ou CNPJ *
+                      {c.taxId} *
                     </label>
                     <input
                       id="cpfCnpj"
@@ -331,7 +421,7 @@ export default function CheckoutPage() {
 
                   <fieldset className="flex flex-col gap-1.5">
                     <legend className="mb-1.5 text-xs font-medium text-muted-foreground">
-                      Forma de pagamento *
+                      {c.method} *
                     </legend>
                     <div className="grid grid-cols-3 gap-2">
                       {billingOptions.map(({ value, label, Icon }) => {
@@ -339,7 +429,7 @@ export default function CheckoutPage() {
                         return (
                           <label
                             key={value}
-                            className={`flex cursor-pointer flex-col items-center gap-1.5 rounded-lg border px-3 py-3 text-xs font-medium transition-colors ${
+                            className={`flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border px-3 py-3 text-xs font-medium transition-colors focus-within:ring-2 focus-within:ring-primary ${
                               selected
                                 ? "border-primary bg-primary/10 text-foreground"
                                 : "border-border bg-background text-muted-foreground hover:border-primary/50"
@@ -357,22 +447,22 @@ export default function CheckoutPage() {
                               className={`h-4 w-4 ${selected ? "text-primary" : ""}`}
                               aria-hidden
                             />
-                            {label}
+                            {locale === "en" ? (value === "CREDIT_CARD" ? "Card" : value === "BOLETO" ? "Bank slip" : label) : label}
                           </label>
                         )
                       })}
                     </div>
                   </fieldset>
 
-                  <button
+                  <Button
                     type="submit"
-                    className="mt-2 inline-flex w-full items-center justify-center rounded-lg bg-primary-btn px-5 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-btn/90"
+                    className="mt-2 h-12 w-full"
                   >
-                    {product.type === "subscription" ? "Assinar" : "Pagar"} R$ {price.toFixed(2)}
-                  </button>
+                    {product.type === "subscription" ? c.subscribe : c.pay} R$ {price.toFixed(2)}
+                  </Button>
 
                   <p className="text-center text-xs text-muted-foreground">
-                    Pagamento processado com segurança via Asaas
+                    {c.secure}
                   </p>
                 </form>
               </>
@@ -380,31 +470,34 @@ export default function CheckoutPage() {
 
             {step === "processing" && (
               <div className="flex min-h-[320px] flex-col items-center justify-center text-center">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" aria-hidden />
-                <h2 className="mt-5 font-serif text-2xl text-foreground">
-                  Processando pagamento...
+                <Loader2 className="h-8 w-8 animate-spin motion-reduce:animate-none text-primary" aria-hidden />
+                <h2 className="mt-5 text-2xl text-foreground">
+                  {c.processing}
                 </h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Aguarde, estamos gerando sua cobrança.
+                  {c.processingDesc}
                 </p>
               </div>
             )}
 
             {step === "success" && (
               <div className="flex flex-col items-center text-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-500/15">
-                  <Check className="h-7 w-7 text-green-400" aria-hidden />
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-green/15">
+                  <Check className="h-7 w-7 text-primary" aria-hidden />
                 </div>
-                <h2 className="mt-4 font-serif text-2xl text-foreground">Cobrança gerada!</h2>
+                <h2 className="mt-4 text-2xl text-foreground">{c.created}</h2>
 
                 {paymentData?.pixData && (
                   <div className="mt-6 w-full">
                     {paymentData.pixData.encodedImage && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <Image
+                        unoptimized
+                        width={224}
+                        height={224}
+                        sizes="224px"
                         src={`data:image/png;base64,${paymentData.pixData.encodedImage}`}
-                        alt="QR Code do Pix"
-                        className="mx-auto h-56 w-56 rounded-xl bg-white p-2"
+                        alt={c.qr}
+                        className="mx-auto h-56 w-56 rounded-xl bg-background p-2"
                       />
                     )}
 
@@ -414,7 +507,7 @@ export default function CheckoutPage() {
                           htmlFor="pix-payload"
                           className="text-xs font-medium text-muted-foreground"
                         >
-                          Pix Copia e Cola
+                          {c.pix}
                         </label>
                         <div className="flex gap-2">
                           <input
@@ -425,63 +518,63 @@ export default function CheckoutPage() {
                               e.currentTarget.select()
                               copyPixPayload(paymentData.pixData!.payload!)
                             }}
-                            className={`${fieldClass} cursor-pointer font-mono text-xs`}
+                            className={`${fieldClass} cursor-pointer text-xs`}
                           />
-                          <button
+                          <Button
                             type="button"
+                            variant="outline"
                             onClick={() => copyPixPayload(paymentData.pixData!.payload!)}
-                            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-3 text-xs font-medium text-foreground transition-colors hover:border-primary/50"
+                            className="h-12 shrink-0 px-3 text-xs"
                           >
                             {copied ? (
-                              <Check className="h-3.5 w-3.5 text-green-400" aria-hidden />
+                              <Check className="h-3.5 w-3.5 text-primary" aria-hidden />
                             ) : (
                               <Copy className="h-3.5 w-3.5" aria-hidden />
                             )}
-                            {copied ? "Copiado!" : "Copiar"}
-                          </button>
+                            {copied ? c.copied : c.copy}
+                          </Button>
                         </div>
-                        <span className="text-xs text-muted-foreground">Clique para copiar</span>
+                        <span className="text-xs text-muted-foreground">{c.copyHint}</span>
                       </div>
                     )}
                   </div>
                 )}
 
                 {paymentData?.bankSlipUrl && (
-                  <a
+                  <Button asChild><a
                     href={paymentData.bankSlipUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-primary-btn px-5 py-3.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-btn/90"
+                    className="mt-6 h-12 w-full"
                   >
-                    Abrir Boleto
-                  </a>
+                    {c.bankSlip}
+                  </a></Button>
                 )}
 
                 {paymentData?.invoiceUrl && (
-                  <a
+                  <Button variant="outline" asChild><a
                     href={paymentData.invoiceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2 inline-flex w-full items-center justify-center rounded-lg border border-border bg-secondary px-5 py-3.5 text-sm font-semibold text-secondary-foreground transition-colors hover:bg-secondary/80"
+                    className="mt-2 h-12 w-full"
                   >
-                    Ver Fatura
-                  </a>
+                    {c.invoice}
+                  </a></Button>
                 )}
 
-                <div className="mt-8 w-full rounded-xl border border-border bg-background/60 p-5 text-left">
+                <div className="mt-8 w-full rounded-xl border border-border bg-surface p-5 text-left">
                   <p className="text-sm text-muted-foreground">
-                    Após a confirmação do pagamento, seu acesso será liberado automaticamente.
+                    {c.access}
                   </p>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Use o e-mail <strong className="text-foreground">{email}</strong> para acessar a
-                    plataforma.
+                    {c.useEmail} <strong className="break-all text-foreground">{email}</strong> {c.signIn}
                   </p>
-                  <Link
+                  <Button variant="outline" asChild><Link
                     href="/login"
-                    className="mt-4 inline-flex w-full items-center justify-center rounded-lg border border-border bg-secondary px-5 py-3 text-sm font-semibold text-secondary-foreground transition-colors hover:bg-secondary/80"
+                    className="mt-4 h-12 w-full"
                   >
-                    Acessar Plataforma
-                  </Link>
+                    {c.platform}
+                  </Link></Button>
                 </div>
               </div>
             )}
@@ -491,15 +584,15 @@ export default function CheckoutPage() {
                 <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15">
                   <AlertCircle className="h-7 w-7 text-primary" aria-hidden />
                 </div>
-                <h2 className="mt-4 font-serif text-2xl text-foreground">Erro no pagamento</h2>
+                <h2 className="mt-4 text-2xl text-foreground">{c.error}</h2>
                 <p className="mt-2 max-w-sm text-sm text-muted-foreground">{errorMsg}</p>
-                <button
+                <Button
                   type="button"
                   onClick={() => setStep("form")}
-                  className="mt-6 inline-flex items-center justify-center rounded-lg bg-primary-btn px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-btn/90"
+                  className="mt-6 h-12 px-6"
                 >
-                  Tentar novamente
-                </button>
+                  {c.retry}
+                </Button>
               </div>
             )}
           </section>

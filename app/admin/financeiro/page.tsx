@@ -101,7 +101,7 @@ function Financeiro() {
         </div>
         <div className="fin-card">
           <span className="fin-label">Vencido</span>
-          <span className="fin-value" style={{ color: "var(--red)" }}>
+          <span className="fin-value" style={{ color: "var(--danger)" }}>
             R$ {totalVencido.toFixed(2)}
           </span>
         </div>
@@ -197,7 +197,7 @@ function PaymentRow({ payment: p }: { payment: Payment }) {
     PENDING: "#fbbf24",
     RECEIVED: "#4ade80",
     CONFIRMED: "#4ade80",
-    OVERDUE: "#F90108",
+    OVERDUE: "var(--danger)",
     REFUNDED: "#888",
     RECEIVED_IN_CASH: "#4ade80",
   }
@@ -217,7 +217,7 @@ function PaymentRow({ payment: p }: { payment: Payment }) {
     <>
       <tr>
         <td>{formatDate(p.dueDate)}</td>
-        <td>{p.description || "—"}</td>
+        <td>{p.description || "Sem descrição"}</td>
         <td>
           <span className="fin-type receita">{asaas.BILLING_TYPES[p.billingType] || p.billingType}</span>
         </td>
@@ -294,7 +294,7 @@ function PaymentRow({ payment: p }: { payment: Payment }) {
 }
 
 function formatDate(dateStr: string | null | undefined) {
-  if (!dateStr) return "—"
+  if (!dateStr) return "Sem data"
   const [y, m, d] = dateStr.split("-")
   return `${d}/${m}/${y}`
 }
