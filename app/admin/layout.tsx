@@ -60,7 +60,8 @@ function AdminShell({ children }: { children: ReactNode }) {
   const visibleItems = menuItems.filter((item) => can(item.perm))
 
   return (
-    <div className="admin-layout">
+    // O Clarity grava sessões do site todo; aqui o texto (nomes e e-mails de leads) vai mascarado.
+    <div className="admin-layout" data-clarity-mask="true">
       {sidebarOpen && <div className="admin-overlay" onClick={() => setSidebarOpen(false)} />}
 
       <aside className={`admin-sidebar${sidebarOpen ? " open" : ""}`}>

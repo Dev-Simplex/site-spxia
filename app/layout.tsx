@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import Script from 'next/script'
 import { I18nProvider } from '@/lib/i18n/context'
 import { AuthProvider } from '@/contexts/auth-context'
 import { SitePreloader } from '@/components/ui/site-preloader'
@@ -81,6 +82,10 @@ export default function RootLayout({
           <SitePreloader />
           <AuthProvider>{children}</AuthProvider>
         </I18nProvider>
+        {/* Microsoft Clarity (mapa de calor e gravação de sessão). O /admin mascara o texto com data-clarity-mask. */}
+        <Script id="microsoft-clarity" strategy="afterInteractive">
+          {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","yyrbdv6pib");`}
+        </Script>
       </body>
     </html>
   )
