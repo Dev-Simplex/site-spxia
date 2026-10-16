@@ -100,7 +100,7 @@ export function Hero() {
               variant="outline"
               className="h-[52px] border-[1.5px] border-input px-[26px] text-foreground hover:border-primary/40 hover:text-primary"
             >
-              <Link href="/diagnostico">{t.ctaConversa}</Link>
+              <Link href="/#contato">{t.ctaConversa}</Link>
             </Button>
           </div>
         </div>

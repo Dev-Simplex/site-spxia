@@ -70,7 +70,7 @@ export function Navbar() {
             </Link>
           </div>
           <Button asChild className="hidden h-11 px-5 text-[0.9375rem] shadow-lg shadow-primary/30 sm:inline-flex">
-            <Link href="/diagnostico">{t.nav.diagnostico}</Link>
+            <Link href="/#contato">{t.nav.diagnostico}</Link>
           </Button>
           <button
             type="button"
@@ -110,7 +110,7 @@ export function Navbar() {
           </div>
           <div className="mx-auto w-full max-w-[1248px] px-6 pb-6">
             <Button asChild size="lg" className="w-full">
-              <Link href="/diagnostico" onClick={close}>
+              <Link href="/#contato" onClick={close}>
                 {t.nav.diagnostico}
               </Link>
             </Button>

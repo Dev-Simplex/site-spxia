@@ -85,7 +85,7 @@ export function Mentoria() {
           </ul>
 
           <Button asChild size="lg" className="mt-8">
-            <Link href="/diagnostico" className="group">
+            <Link href="/#contato" className="group">
               {t.cta}
               <ArrowRight
                 aria-hidden="true"

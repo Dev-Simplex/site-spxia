@@ -126,7 +126,7 @@ export function ComoFunciona() {
                 size="lg"
                 className="group h-[52px] px-[26px] shadow-lg shadow-primary/30 hover:-translate-y-px hover:shadow-xl hover:shadow-primary/35"
               >
-                <Link href="/diagnostico">
+                <Link href="/#contato">
                   {c.cta}
                   <ArrowRight aria-hidden className="transition-transform duration-200 group-hover:translate-x-1" />
                 </Link>
