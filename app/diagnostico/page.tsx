@@ -1,7 +1,7 @@
 ﻿'use client'
 
 import { reveal } from "@/components/ui/motion-kit"
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useI18n } from '@/lib/i18n/context'
@@ -18,9 +18,11 @@ import {
 } from 'lucide-react'
 import ReCAPTCHA from 'react-google-recaptcha'
 
+import { WhatsAppIcon } from '@/components/icons/brand'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/logo'
 import { cn } from '@/lib/utils'
+import { whatsappHref } from '@/lib/whatsapp'
 
 import { questionCopy } from './perguntas'
 
@@ -31,12 +33,9 @@ if (!RECAPTCHA_SITE_KEY) {
   )
 }
 
-const QUESTIONS_PER_PAGE = 5
-const totalPages = Math.ceil(questionCopy.pt.length / QUESTIONS_PER_PAGE)
-// contato + páginas de perguntas + confirmação/captcha
-const totalSteps = totalPages + 2
-
-type Step = 'contact' | 'questions' | 'captcha' | 'sending' | 'success' | 'error'
+// Uma tela só: contato, três perguntas opcionais e o captcha. O resto do
+// diagnóstico acontece na conversa de 30 minutos.
+type Step = 'form' | 'sending' | 'success' | 'error'
 
 const fieldClass =
   'w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/40'
@@ -44,16 +43,16 @@ const fieldClass =
 const labelClass =
   'mb-2 block text-sm font-medium text-foreground'
 
+const directLinkClass =
+  'inline-flex items-center gap-1.5 font-semibold text-primary underline-offset-4 hover:underline'
+
 const copy = {
   "pt": {
     "home": "Voltar ao site",
     "homeAria": "Voltar para a página inicial da SPXia",
-    "step": "Etapa",
-    "of": "de",
-    "progress": "Progresso do diagnóstico",
     "start": "Para",
     "startEm": "começar",
-    "intro": "Conte um pouco sobre você e sua empresa.",
+    "intro": "Deixe seu contato. Se quiser, adiante um pouco da sua rotina.",
     "direct": "Prefere conversar direto?",
     "directSubject": "Quero conversar com a SPXia",
     "name": "Seu nome",
@@ -62,54 +61,30 @@ const copy = {
     "emailPlaceholder": "seu@email.com",
     "company": "Nome da empresa",
     "companyPlaceholder": "Empresa LTDA",
-    "cnpj": "CNPJ",
-    "industry": "Ramo de atuação",
-    "industryPlaceholder": "Ex.: imobiliária, incorporadora, varejo, saúde",
-    "business": "Conte sobre o seu negócio",
-    "businessPlaceholder": "O que sua empresa faz? Quantas pessoas trabalham nela? O que mais toma tempo hoje?",
+    "optional": "Se quiser, adiante um pouco (opcional)",
     "cancel": "Cancelar",
-    "next": "Próximo",
-    "back": "Voltar",
-    "review": "Revisar e enviar",
-    "routine": "Como é a",
-    "routineEm": "sua rotina",
-    "required": "Responda todas as perguntas com detalhes para ajudar na análise.",
-    "fieldRequired": "Responda esta pergunta para continuar",
-    "missing": "Ainda faltam respostas nesta página.",
-    "confirm": "Tudo",
-    "confirmEm": "certo?",
-    "confirmDesc": "Confira seus dados e faça a verificação para enviar.",
-    "details": "Seus dados",
-    "answers": "Suas respostas",
-    "reviewName": "Nome",
-    "reviewCompany": "Empresa",
-    "reviewIndustry": "Ramo",
-    "answered": "perguntas respondidas",
+    "send": "Enviar",
     "verify": "Faça a verificação para enviar.",
     "unavailable": "A verificação está indisponível; tente novamente mais tarde.",
-    "send": "Enviar diagnóstico",
     "sending": "Enviando…",
-    "saving": "Estamos salvando suas respostas.",
+    "saving": "Estamos enviando seu contato.",
     "received": "Recebemos",
-    "receivedEm": "suas respostas.",
-    "success": "Vamos analisar suas respostas e entrar em contato por e-mail e WhatsApp.",
-    "collected": "Respostas recebidas",
-    "analysis": "Análise com IA",
-    "contact": "Conversa com a equipe",
+    "receivedEm": "seu contato.",
+    "success": "Vamos chamar você no WhatsApp ou por e-mail para marcar a conversa de 30 minutos.",
+    "stepReceived": "Contato recebido",
+    "stepCall": "Chamamos você",
+    "stepTalk": "Conversa de 30 minutos",
     "error": "Não conseguimos enviar",
-    "errorDesc": "Tente novamente em instantes; suas respostas continuam aqui.",
+    "errorDesc": "Tente novamente em instantes; o que você escreveu continua aqui.",
     "retry": "Tentar novamente",
     "privacy": "SPXia · Seus dados são usados apenas para este diagnóstico."
   },
   "en": {
     "home": "Back to the site",
     "homeAria": "Back to the SPXia home page",
-    "step": "Step",
-    "of": "of",
-    "progress": "Diagnosis progress",
     "start": "Let’s",
     "startEm": "get started",
-    "intro": "Tell us a little about you and your company.",
+    "intro": "Leave your contact details. If you like, tell us a bit about your routine.",
     "direct": "Rather talk to us directly?",
     "directSubject": "I'd like to talk to SPXia",
     "name": "Your name",
@@ -118,42 +93,21 @@ const copy = {
     "emailPlaceholder": "you@email.com",
     "company": "Company name",
     "companyPlaceholder": "Company Ltd.",
-    "cnpj": "CNPJ (Brazilian company ID)",
-    "industry": "Industry",
-    "industryPlaceholder": "e.g. real estate agency, developer, retail, healthcare",
-    "business": "Tell us about your business",
-    "businessPlaceholder": "What does your company do? How many people work there? What takes up the most time today?",
+    "optional": "If you like, tell us a bit more (optional)",
     "cancel": "Cancel",
-    "next": "Next",
-    "back": "Back",
-    "review": "Review and send",
-    "routine": "Your",
-    "routineEm": "day-to-day",
-    "required": "Answer every question in detail to help with the analysis.",
-    "fieldRequired": "Answer this question to continue",
-    "missing": "Some questions on this page are still unanswered.",
-    "confirm": "All",
-    "confirmEm": "set?",
-    "confirmDesc": "Check your details and complete the verification to send.",
-    "details": "Your details",
-    "answers": "Your answers",
-    "reviewName": "Name",
-    "reviewCompany": "Company",
-    "reviewIndustry": "Industry",
-    "answered": "questions answered",
+    "send": "Send",
     "verify": "Complete the verification to send.",
     "unavailable": "Verification is unavailable; please try again later.",
-    "send": "Send diagnosis",
     "sending": "Sending…",
-    "saving": "We’re saving your answers.",
+    "saving": "We’re sending your details.",
     "received": "We got",
-    "receivedEm": "your answers.",
-    "success": "We’ll review your answers and contact you by email and WhatsApp.",
-    "collected": "Answers received",
-    "analysis": "AI analysis",
-    "contact": "Talk with our team",
+    "receivedEm": "your details.",
+    "success": "We’ll reach out on WhatsApp or by email to book the 30-minute conversation.",
+    "stepReceived": "Details received",
+    "stepCall": "We reach out",
+    "stepTalk": "30-minute conversation",
     "error": "We couldn’t send it",
-    "errorDesc": "Please try again in a moment; your answers are still here.",
+    "errorDesc": "Please try again in a moment; what you wrote is still here.",
     "retry": "Try again",
     "privacy": "SPXia · Your data is used only for this diagnosis."
   }
@@ -170,69 +124,18 @@ export default function DiagnosticoPage() {
     exit: { opacity: 0, y: reduceMotion ? 0 : -16 },
     transition: { duration: reduceMotion ? 0 : 0.35 },
   }
-  const [step, setStep] = useState<Step>('contact')
-  const [qPage, setQPage] = useState(0)
+  const [step, setStep] = useState<Step>('form')
   const [errorMsg, setErrorMsg] = useState('')
-  const [validationErrors, setValidationErrors] = useState<string[]>([])
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
-  const captchaRef = useRef<ReCAPTCHA | null>(null)
 
-  // Contato
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
-  const [business, setBusiness] = useState('')
   const [companyName, setCompanyName] = useState('')
-  const [cnpj, setCnpj] = useState('')
-  const [industry, setIndustry] = useState('')
-
-  // Respostas
   const [answers, setAnswers] = useState<Record<string, string>>({})
 
-  function setAnswer(id: string, value: string) {
-    setAnswers((prev) => ({ ...prev, [id]: value }))
-    setValidationErrors((prev) => prev.filter((e) => e !== id))
-  }
-
-  function handleContactSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setStep('questions')
-    setQPage(0)
-  }
-
-  function validateCurrentPage() {
-    const pageQuestions = questions.slice(
-      qPage * QUESTIONS_PER_PAGE,
-      (qPage + 1) * QUESTIONS_PER_PAGE,
-    )
-    const missing = pageQuestions
-      .filter((q) => !answers[q.id]?.trim())
-      .map((q) => q.id)
-    setValidationErrors(missing)
-    return missing.length === 0
-  }
-
-  function nextPage() {
-    if (!validateCurrentPage()) return
-
-    if (qPage < totalPages - 1) {
-      setQPage(qPage + 1)
-      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
-    } else {
-      // Última página; vai para a etapa de revisão + captcha
-      setStep('captcha')
-      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
-    }
-  }
-
-  function prevPage() {
-    setValidationErrors([])
-    if (qPage > 0) setQPage(qPage - 1)
-    else setStep('contact')
-    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
-  }
-
-  async function submitAll() {
     if (RECAPTCHA_SITE_KEY && !captchaToken) {
       setErrorMsg(c.verify)
       return
@@ -250,9 +153,6 @@ export default function DiagnosticoPage() {
         email,
         whatsapp: whatsapp.replace(/\D/g, ''),
         companyName,
-        cnpj: cnpj.replace(/\D/g, ''),
-        industry,
-        business,
         answers,
         locale,
         captchaToken,
@@ -265,60 +165,23 @@ export default function DiagnosticoPage() {
     window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
   }
 
-  const currentQuestions = questions.slice(
-    qPage * QUESTIONS_PER_PAGE,
-    (qPage + 1) * QUESTIONS_PER_PAGE,
-  )
-  const currentStep =
-    step === 'contact' ? 1 : step === 'questions' ? qPage + 2 : totalSteps
-  const progress = Math.round((currentStep / totalSteps) * 100)
-  const showProgress = step === 'contact' || step === 'questions' || step === 'captcha'
-  const answeredCount = Object.values(answers).filter((a) => a?.trim()).length
-
   return (
     <div className="relative isolate min-h-screen bg-background">
       <div className="relative mx-auto w-full max-w-6xl px-5 py-8 sm:px-6 sm:py-12">
-        {/* Topo: logo + voltar + progresso */}
-        <header className="mb-8">
-          <div className="flex items-center justify-between gap-4">
-            <Link href="/" aria-label={c.homeAria}>
-              <Logo height={30} />
-            </Link>
-            <div className="flex items-center gap-3"><LanguageSwitcher />
+        <header className="mb-8 flex items-center justify-between gap-4">
+          <Link href="/" aria-label={c.homeAria}>
+            <Logo height={30} />
+          </Link>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <Link
               href="/"
               className="inline-flex items-center gap-1.5 py-2 text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft aria-hidden="true" className="h-3.5 w-3.5" />
               {c.home}
-            </Link></div>
+            </Link>
           </div>
-
-          {showProgress && (
-            <div className="mt-6">
-              <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
-                <span>
-                  {c.step} {currentStep} {c.of} {totalSteps}
-                </span>
-                <span className="text-primary">{progress}%</span>
-              </div>
-              <div
-                role="progressbar"
-                aria-valuenow={progress}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-label={c.progress}
-                className="h-1.5 w-full overflow-hidden rounded-full bg-surface"
-              >
-                <motion.div
-                  className="h-full rounded-full bg-primary"
-                  initial={false}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: reduceMotion ? 0 : 0.45, ease: [0.22, 1, 0.36, 1] }}
-                />
-              </div>
-            </div>
-          )}
         </header>
 
         <div className="grid items-start gap-8 lg:grid-cols-[0.8fr_1.2fr]">
@@ -328,28 +191,36 @@ export default function DiagnosticoPage() {
         </motion.aside>
         <div className="min-w-0 rounded-[2rem] border border-border bg-background p-5 sm:p-8">
           <AnimatePresence mode="wait" initial={false}>
-            {/* ETAPA 1: CONTATO */}
-            {step === 'contact' && (
-              <motion.div key="contact" {...stepMotion}>
+            {step === 'form' && (
+              <motion.div key="form" {...stepMotion}>
                 <StepHeader
                   title={c.start}
                   titleEm={c.startEm}
                   desc={c.intro}
                 />
 
-                {/* Atalho para quem não quer o questionário (ainda não há WhatsApp). */}
-                <p className="-mt-3 mb-7 flex flex-wrap items-center gap-x-2.5 gap-y-1 rounded-2xl bg-surface px-4 py-3 text-sm text-foreground">
+                {/* Atalho para quem prefere falar com alguém em vez de preencher. */}
+                <p className="-mt-3 mb-7 flex flex-wrap items-center gap-x-4 gap-y-1.5 rounded-2xl bg-surface px-4 py-3 text-sm text-foreground">
                   {c.direct}
                   <a
+                    href={whatsappHref(t.contato.whatsappText)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={directLinkClass}
+                  >
+                    <WhatsAppIcon className="size-4" />
+                    {t.contato.whatsapp}
+                  </a>
+                  <a
                     href={`mailto:${t.contato.email}?subject=${encodeURIComponent(c.directSubject)}`}
-                    className="inline-flex items-center gap-1.5 font-semibold text-primary underline-offset-4 hover:underline"
+                    className={directLinkClass}
                   >
                     <Mail aria-hidden="true" className="size-4" />
                     {t.contato.email}
                   </a>
                 </p>
 
-                <form onSubmit={handleContactSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid gap-5 sm:grid-cols-2">
                     <div>
                       <label htmlFor="diag-nome" className={labelClass}>
@@ -357,10 +228,27 @@ export default function DiagnosticoPage() {
                       </label>
                       <input
                         id="diag-nome"
+                        autoComplete="name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
                         placeholder={c.fullName}
+                        className={fieldClass}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="diag-whatsapp" className={labelClass}>
+                        WhatsApp *
+                      </label>
+                      <input
+                        id="diag-whatsapp"
+                        type="tel"
+                        inputMode="tel"
+                        autoComplete="tel"
+                        value={whatsapp}
+                        onChange={(e) => setWhatsapp(e.target.value)}
+                        required
+                        placeholder="(00) 00000-0000"
                         className={fieldClass}
                       />
                     </div>
@@ -371,27 +259,11 @@ export default function DiagnosticoPage() {
                       <input
                         id="diag-email"
                         type="email"
+                        autoComplete="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
                         placeholder={c.emailPlaceholder}
-                        className={fieldClass}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <div>
-                      <label htmlFor="diag-whatsapp" className={labelClass}>
-                        WhatsApp *
-                      </label>
-                      <input
-                        id="diag-whatsapp"
-                        inputMode="tel"
-                        value={whatsapp}
-                        onChange={(e) => setWhatsapp(e.target.value)}
-                        required
-                        placeholder="(00) 00000-0000"
                         className={fieldClass}
                       />
                     </div>
@@ -401,6 +273,7 @@ export default function DiagnosticoPage() {
                       </label>
                       <input
                         id="diag-empresa"
+                        autoComplete="organization"
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
                         required
@@ -410,49 +283,44 @@ export default function DiagnosticoPage() {
                     </div>
                   </div>
 
-                  <div className="grid gap-5 sm:grid-cols-2">
-                    <div>
-                      <label htmlFor="diag-cnpj" className={labelClass}>
-                        {c.cnpj}
-                      </label>
-                      <input
-                        id="diag-cnpj"
-                        inputMode="numeric"
-                        value={cnpj}
-                        onChange={(e) => setCnpj(e.target.value)}
-                        placeholder="00.000.000/0000-00"
-                        className={fieldClass}
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="diag-ramo" className={labelClass}>
-                        {c.industry} *
-                      </label>
-                      <input
-                        id="diag-ramo"
-                        value={industry}
-                        onChange={(e) => setIndustry(e.target.value)}
-                        required
-                        placeholder={c.industryPlaceholder}
-                        className={fieldClass}
-                      />
-                    </div>
+                  <div role="group" aria-labelledby="diag-opcional" className="space-y-4 border-t border-border pt-5">
+                    <p id="diag-opcional" className="text-sm font-semibold text-foreground">
+                      {c.optional}
+                    </p>
+                    {questions.map((q) => (
+                      <div key={q.id}>
+                        <label htmlFor={`diag-${q.id}`} className={labelClass}>
+                          {q.label}
+                        </label>
+                        <textarea
+                          id={`diag-${q.id}`}
+                          value={answers[q.id] ?? ''}
+                          onChange={(e) => setAnswers((prev) => ({ ...prev, [q.id]: e.target.value }))}
+                          placeholder={q.placeholder}
+                          rows={2}
+                          className={cn(fieldClass, 'resize-y')}
+                        />
+                      </div>
+                    ))}
                   </div>
 
                   <div>
-                    <label htmlFor="diag-negocio" className={labelClass}>
-                      {c.business} *
-                    </label>
-                    <textarea
-                      id="diag-negocio"
-                      value={business}
-                      onChange={(e) => setBusiness(e.target.value)}
-                      required
-                      rows={3}
-                      placeholder={c.businessPlaceholder}
-                      className={cn(fieldClass, 'resize-y')}
-                    />
+                    {RECAPTCHA_SITE_KEY ? (
+                      <ReCAPTCHA
+                        sitekey={RECAPTCHA_SITE_KEY}
+                        onChange={(token) => {
+                          setCaptchaToken(token)
+                          setErrorMsg('')
+                        }}
+                        onExpired={() => setCaptchaToken(null)}
+                        theme="light"
+                      />
+                    ) : (
+                      <Banner>{c.unavailable}</Banner>
+                    )}
                   </div>
+
+                  {errorMsg && <Banner>{errorMsg}</Banner>}
 
                   <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-between">
                     <Button variant="outline" size="lg" asChild className="h-11">
@@ -461,9 +329,10 @@ export default function DiagnosticoPage() {
                     <Button
                       type="submit"
                       size="lg"
+                      disabled={Boolean(RECAPTCHA_SITE_KEY) && !captchaToken}
                       className="h-11 px-7"
                     >
-                      {c.next}
+                      {c.send}
                       <ArrowRight aria-hidden="true" className="h-4 w-4" />
                     </Button>
                   </div>
@@ -471,169 +340,6 @@ export default function DiagnosticoPage() {
               </motion.div>
             )}
 
-            {/* ETAPA 2+: PERGUNTAS */}
-            {step === 'questions' && (
-              <motion.div key={`questions-${qPage}`} {...stepMotion}>
-                <StepHeader
-                  title={c.routine}
-                  titleEm={c.routineEm}
-                  desc={c.required}
-                />
-
-                <div className="space-y-6">
-                  {currentQuestions.map((q, i) => {
-                    const hasError = validationErrors.includes(q.id)
-                    const number = qPage * QUESTIONS_PER_PAGE + i + 1
-                    return (
-                      <div key={q.id}>
-                        <label
-                          htmlFor={`diag-${q.id}`}
-                          className="mb-2 flex gap-2 text-sm leading-relaxed text-foreground"
-                        >
-                          <span className="text-primary">{number}.</span>
-                          <span>
-                            {q.label}
-                            <span className="ml-1 text-primary">*</span>
-                          </span>
-                        </label>
-                        <textarea
-                          id={`diag-${q.id}`}
-                          value={answers[q.id] || ''}
-                          onChange={(e) => setAnswer(q.id, e.target.value)}
-                          placeholder={q.placeholder}
-                          rows={3}
-                          aria-invalid={hasError}
-                          className={cn(
-                            fieldClass,
-                            'resize-y',
-                            hasError &&
-                              'border-destructive focus:border-destructive focus:ring-destructive/40',
-                          )}
-                        />
-                        {hasError && (
-                          <span className="mt-1.5 block text-xs text-destructive">
-                            {c.fieldRequired}
-                          </span>
-                        )}
-                      </div>
-                    )
-                  })}
-
-                  {validationErrors.length > 0 && (
-                    <Banner>{c.missing}</Banner>
-                  )}
-
-                  <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-between">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="lg"
-                      className="h-11"
-                      onClick={prevPage}
-                    >
-                      <ArrowLeft aria-hidden="true" className="h-4 w-4" />
-                      {c.back}
-                    </Button>
-                    <Button
-                      type="button"
-                      size="lg"
-                      onClick={nextPage}
-                      className="h-11 px-7"
-                    >
-                      {qPage < totalPages - 1 ? c.next : c.review}
-                      <ArrowRight aria-hidden="true" className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* ETAPA FINAL: REVISÃO + CAPTCHA */}
-            {step === 'captcha' && (
-              <motion.div key="captcha" {...stepMotion}>
-                <StepHeader
-                  title={c.confirm}
-                  titleEm={c.confirmEm}
-                  desc={c.confirmDesc}
-                />
-
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-xl border border-border bg-background/40 p-5">
-                    <h3 className="mb-3 text-xs text-primary">
-                      {c.details}
-                    </h3>
-                    <dl className="space-y-2 text-sm">
-                      <ReviewRow label={c.reviewName} value={name} />
-                      <ReviewRow label={c.email} value={email} />
-                      <ReviewRow label="WhatsApp" value={whatsapp} />
-                      <ReviewRow label={c.reviewCompany} value={companyName} />
-                      <ReviewRow label={c.reviewIndustry} value={industry} />
-                    </dl>
-                  </div>
-                  <div className="rounded-xl border border-border bg-background/40 p-5">
-                    <h3 className="mb-3 text-xs text-primary">
-                      {c.answers}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      <span className="text-3xl text-foreground">
-                        {answeredCount}
-                      </span>{' '}
-                      {c.of} {questions.length} {c.answered}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-6 flex justify-center">
-                  {RECAPTCHA_SITE_KEY ? (
-                    <ReCAPTCHA
-                      ref={captchaRef}
-                      sitekey={RECAPTCHA_SITE_KEY}
-                      onChange={(token) => setCaptchaToken(token)}
-                      onExpired={() => setCaptchaToken(null)}
-                      theme="light"
-                    />
-                  ) : (
-                    <Banner>
-                      {c.unavailable}
-                    </Banner>
-                  )}
-                </div>
-
-                {errorMsg && (
-                  <div className="mt-4">
-                    <Banner>{errorMsg}</Banner>
-                  </div>
-                )}
-
-                <div className="mt-6 flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-between">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="lg"
-                    className="h-11"
-                    onClick={() => {
-                      setStep('questions')
-                      setQPage(totalPages - 1)
-                    }}
-                  >
-                    <ArrowLeft aria-hidden="true" className="h-4 w-4" />
-                    {c.back}
-                  </Button>
-                  <Button
-                    type="button"
-                    size="lg"
-                    onClick={submitAll}
-                    disabled={Boolean(RECAPTCHA_SITE_KEY) && !captchaToken}
-                    className="h-11 px-7"
-                  >
-                    {c.send}
-                    <ArrowRight aria-hidden="true" className="h-4 w-4" />
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-
-            {/* ENVIANDO */}
             {step === 'sending' && (
               <motion.div
                 key="sending"
@@ -653,7 +359,6 @@ export default function DiagnosticoPage() {
               </motion.div>
             )}
 
-            {/* SUCESSO */}
             {step === 'success' && (
               <motion.div
                 key="success"
@@ -672,9 +377,9 @@ export default function DiagnosticoPage() {
                 </p>
 
                 <div className="mt-8 flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
-                  <SuccessStep n={1} state="done" label={c.collected} />
-                  <SuccessStep n={2} state="active" label={c.analysis} />
-                  <SuccessStep n={3} state="idle" label={c.contact} />
+                  <SuccessStep n={1} state="done" label={c.stepReceived} />
+                  <SuccessStep n={2} state="active" label={c.stepCall} />
+                  <SuccessStep n={3} state="idle" label={c.stepTalk} />
                 </div>
 
                 <Button variant="outline" size="lg" asChild className="mt-8 h-11">
@@ -686,7 +391,6 @@ export default function DiagnosticoPage() {
               </motion.div>
             )}
 
-            {/* ERRO */}
             {step === 'error' && (
               <motion.div
                 key="error"
@@ -706,10 +410,10 @@ export default function DiagnosticoPage() {
                   size="lg"
                   className="mt-6 h-11 px-7"
                   onClick={() => {
-                    setStep('captcha')
+                    // O captcha é de uso único: o formulário volta com um novo.
+                    setStep('form')
                     setCaptchaToken(null)
                     setErrorMsg('')
-                    captchaRef.current?.reset()
                   }}
                 >
                   {c.retry}
@@ -744,16 +448,6 @@ function StepHeader({
         <strong className="font-bold">{titleEm}</strong>
       </h1>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desc}</p>
-    </div>
-  )
-}
-
-function ReviewRow({ label, value }: { label: string; value: string }) {
-  const { locale } = useI18n()
-  return (
-    <div className="flex gap-2">
-      <dt className="shrink-0 text-muted-foreground">{label}:</dt>
-      <dd className="min-w-0 truncate text-foreground">{value || (locale === 'pt' ? 'Não informado' : 'Not provided')}</dd>
     </div>
   )
 }

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { useReveal } from "@/components/ui/motion-kit"
 import { useI18n } from "@/lib/i18n/context"
 import { cn } from "@/lib/utils"
+import { whatsappHref } from "@/lib/whatsapp"
 
 const DAY_COUNT = 5
 const SLOTS = ["09:00", "10:30", "14:00", "15:30", "16:00", "17:30"]
@@ -55,11 +56,6 @@ const longDate = (date: Date, lang: string) =>
 // Ainda não há agenda online: o pedido sai pronto no e-mail de quem visita.
 const mailRequest = (to: string, subject: string, body: string) =>
   `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-
-// WhatsApp comercial (linha da Simplex no Chat SPX); a conversa abre com a mensagem pronta.
-const WHATSAPP_NUMBER = "5566996571379"
-const whatsappHref = (text: string) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`
-
 const optionFocus = "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary"
 
 export function CtaFinal() {

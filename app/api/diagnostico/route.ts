@@ -17,9 +17,6 @@ const COLUNAS = {
   email: 'E-mail',
   whatsapp: 'WhatsApp',
   companyName: 'Empresa',
-  cnpj: 'CNPJ',
-  industry: 'Ramo',
-  business: 'Sobre o negócio',
 } as const
 
 const texto = (value: unknown) => (typeof value === 'string' ? value.trim().slice(0, MAX_CHARS) : '')
