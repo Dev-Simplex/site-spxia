@@ -188,6 +188,9 @@ const en: Dictionary = {
     cta: 'Book a free diagnosis',
     emailCta: 'Email us',
     email: 'contato@simplexsolucoes.com.br',
+    whatsappCta: 'Talk to us directly',
+    whatsapp: '+55 66 99657-1379',
+    whatsappText: "Hi! I found SPXia's website and would like to talk.",
     location: 'Sinop · Mato Grosso, Brazil',
     booking: {
       title: 'Free diagnosis',

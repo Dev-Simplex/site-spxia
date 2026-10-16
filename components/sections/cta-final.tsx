@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react"
 import { motion } from "motion/react"
 
 import { CalendarCheckIcon, type CalendarCheckIconHandle } from "@/components/icons/animated/calendar-check"
+import { WhatsAppIcon } from "@/components/icons/brand"
 import { Logo } from "@/components/logo"
 import { Button } from "@/components/ui/button"
 import { useReveal } from "@/components/ui/motion-kit"
@@ -51,9 +52,13 @@ function bookableDays(now: number) {
 const longDate = (date: Date, lang: string) =>
   date.toLocaleDateString(lang, { weekday: "long", day: "2-digit", month: "2-digit" })
 
-// Ainda não há agenda online nem WhatsApp: o pedido sai pronto no e-mail de quem visita.
+// Ainda não há agenda online: o pedido sai pronto no e-mail de quem visita.
 const mailRequest = (to: string, subject: string, body: string) =>
   `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+
+// WhatsApp comercial (linha da Simplex no Chat SPX); a conversa abre com a mensagem pronta.
+const WHATSAPP_NUMBER = "5566996571379"
+const whatsappHref = (text: string) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`
 
 const optionFocus = "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary"
 
@@ -118,6 +123,23 @@ export function CtaFinal() {
               <a href={`mailto:${contact.email}`}>{contact.emailCta}</a>
             </Button>
           </div>
+
+          <a
+            href={whatsappHref(contact.whatsappText)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group mt-8 inline-flex items-center gap-3.5 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          >
+            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-brand-green text-white transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none">
+              <WhatsAppIcon className="size-6" />
+            </span>
+            <span>
+              <span className="block text-sm text-white/80">{contact.whatsappCta}</span>
+              <b className="block text-xl font-semibold tracking-tight underline-offset-4 group-hover:underline">
+                {contact.whatsapp}
+              </b>
+            </span>
+          </a>
         </motion.div>
 
         {/* Card de agendamento: escolhe dia e hora; o pedido sai pelo e-mail. */}

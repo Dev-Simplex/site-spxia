@@ -186,6 +186,9 @@ const pt = {
     cta: 'Agendar diagnóstico gratuito',
     emailCta: 'Falar por e-mail',
     email: 'contato@simplexsolucoes.com.br',
+    whatsappCta: 'Fale direto com a gente',
+    whatsapp: '(66) 99657-1379',
+    whatsappText: 'Olá! Vim pelo site da SPXia e quero conversar.',
     location: 'Sinop · Mato Grosso',
     booking: {
       title: 'Diagnóstico gratuito',
